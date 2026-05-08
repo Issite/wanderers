@@ -70,7 +70,7 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
-    gameManager.tribes.delete(clients.get(ws)); // Remove tribe associated with this client
+    gameManager.entities.delete(clients.get(ws)); // Remove tribe associated with this client
     clients.delete(ws);
   });
 

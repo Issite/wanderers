@@ -62,7 +62,10 @@ function setupCanvas() {
 }
 
 function handleCanvasMouseDown(e) {
-  if (!tribeID) return;
+  if (tribeID === null) {
+    console.log('Not in game yet, ignoring mouse down');
+    return;
+  };
   
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -76,6 +79,7 @@ function handleCanvasMouseDown(e) {
   const distance = Math.hypot(worldX - totem.x, worldY - totem.y);
   
   if (distance < TOTEM_SIZE) {
+    console.log('Started dragging totem');
     isDragging = true;
     dragOffset.x = worldX - totem.x;
     dragOffset.y = worldY - totem.y;
@@ -84,7 +88,7 @@ function handleCanvasMouseDown(e) {
 }
 
 function handleCanvasMouseMove(e) {
-  if (!isDragging || !tribeID) return;
+  if (!isDragging || tribeID === null) return;
   
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -143,6 +147,7 @@ function connectWebSocket() {
     } else if (data.type === 'gameJoined') {
       localTribe = data.tribe;
       tribeID = data.tribe.id;
+      console.log(`Joined game with tribe ID: ${tribeID}, name: ${localTribe.name}`);
       cameraX = localTribe.x - canvas.width / 2;
       cameraY = localTribe.y - canvas.height / 2;
       targetCameraX = cameraX;
