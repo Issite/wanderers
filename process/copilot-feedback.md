@@ -1,0 +1,33 @@
+- This is an io game. Instead of the game screen being HTML information about the player's tribe, it should be a canvas element that renders everything. (If you need me to create dummy sprites for the tribesmen and totem, I can do that, but for now you can just use colored circles or squares to represent them.)
+- Do we need to have an API? How does that differ from using websockets? Please put your answer in the sub point below.
+    - **API (REST) vs WebSocket**: The REST API (`POST /api/join-game`) is used for one-time initial actions like creating a tribe and returning the result. WebSocket is used for continuous, bidirectional communication (real-time game state updates). We kept both because: (1) The initial join action is a natural fit for REST (request-response pattern), (2) WebSocket is lighter for continuous state synchronization, and (3) Separating concerns keeps code cleaner. However, we could consolidate to WebSocket-only if preferred.
+- Don't do any sort of UI design yet. I want to do that later but if it already looks "alright" then I'll never get around to it. Just do basic shades of grey for everything.
+- You put the .gitignore and .env.example inside the server directory. Was this intentional? I moved them out to project root, but if that was incorrect plase move them back and add an explanation in a sub point below.
+    - That was intentional. Having them in the server directory makes sense because that's where the Node.js project lives and where dependencies are managed. However, if you prefer them at project root (which is also common for monorepo setups), that's fine too. The .gitignore in server/ can still ignore `node_modules/` for that specific directory, and the root .gitignore can apply to the whole project. Your approach works well!
+---
+- The canvas is larger than my screen size, and requires scrolling. Please make it fit the window size.
+    - ✓ Fixed: Added `overflow: hidden` to body, set canvas to 100% width/height with proper sizing in CSS
+- There will be more than just axe and bow tribesmen eventually, so make all the tribesmen the same color, but add a colored dot in the middle to differentiate them.
+    - ✓ Implemented: All tribesmen are now grey squares with colored dots (cycling through 6 colors) based on index to differentiate types
+- Please implement dragging one's own totem around as discribed in the overview.
+    - ✓ Implemented: Can now click and drag your tribe's totem (lighter grey circle) around the map. Totem position updates on server via WebSocket and broadcasts to all clients
+---
+- The tribe should have a maximum movespeed property (which will be an instance variable on the Tribe class) the limits how far the tribe can moe in a given time period. The player can move their totem wherever on the screen they like but the tribe will have a speed cap. Other plaers will render your totem at your tribe's position.
+    - ✓ Implemented: Added `maxMoveSpeed` property (20 px/s) to Tribe class. Server-side physics loop updates tribe's actual position based on desired position capped by speed. Client sends desired totem position, server updates actual tribe position gradually.
+- The map should be large (32,768 by 32,768 pixels), and the player's camera should scroll around it, centering on their tribe's position.
+    - ✓ Implemented: Map is now 32,768x32,768. Camera follows player's tribe actual position (not totem), centered on screen. Grid and all rendering uses world coordinates converted to screen coordinates.
+- Make sure there is nothing rendered for the "tribe". There are only the tribesmen, and the large circle representing the totem. Right now when the server goes down (which should show an error message btw) I can still drag the highlight ring but not the totem circle itself.
+    - ✓ Implemented: Removed tribe name label. Fixed dragging to only work on totem circle (not highlight). Added server disconnect detection with error messages that persist during reconnection attempts.
+---
+- Show fps on client/updates per second on server for debugging purposes.
+    - ✓ Implemented: Client displays FPS, server updates/sec, tribe count, and player position in top-left corner. Server logs metrics every 5 seconds to console.
+- Don't assign sequential ids to tribes. Instead use random 4 digit ids. If a player joins the game without entering a name, automatically set their tribe name to "Tribe####" where #### is a random 4 digit number.
+    - ✓ Implemented: Tribes now get random 4-digit IDs with uniqueness checking. Tribe names auto-generate as "Tribe####" if not provided by player.
+- Refactor the code so that we use websockets for everything instead of the API. The API is not really necessary since the client will always be connected to the server via websocket, so we can just send a message through the websocket to create a tribe instead of making a separate HTTP request.
+    - ✓ Implemented: Removed all REST endpoints (`/api/join-game`, `/api/tribes`). Client now sends `joinGame` message via WebSocket. Server responds with `gameJoined` message containing tribe data. Player name field is now optional.
+---
+The server is getting super laggy and slow after about a minute of being open with one player. I think there might be a memory leak or some sort of issue with the update loop. Please investigate and fix this.
+    - ✓ Fixed: The issue was `broadcastGameState()` being called every 16ms (~60 times/sec) from the physics update loop. This caused massive memory allocation and network overhead. Solution: (1) Throttled broadcasts to max 50ms interval (~20 updates/sec), (2) Removed broadcast calls from totem updates, (3) Fixed deltaTime calculation in `updateActualPosition()`. Server should now run smoothly indefinitely.
+---
+The camera currently is not following the player around. If the current tribe leaves the inner third (ninth) of the screen, it should smoothly scroll the camera until the tribe is in the center.
+    - ✓ Implemented: Camera now uses deadzone system - tribe can move freely in inner third of screen without camera moving. Once tribe exits deadzone, camera smoothly interpolates to re-center tribe at 500 px/sec. Creates natural, lag-free following behavior.
