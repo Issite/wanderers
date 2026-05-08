@@ -1,6 +1,6 @@
-const Tribe = require("./classes/tribe");
-const Tribesman = require("./classes/tribesman");
-const Totem = require("./classes/totem");
+const Tribe = require("./entities/tribe");
+const Tribesman = require("./entities/tribesman");
+const Totem = require("./entities/totem");
 const { getNewId } = require("./utils");
 
 class GameManager {
