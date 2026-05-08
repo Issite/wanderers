@@ -1,6 +1,7 @@
 const Tribe = require("./entities/tribe");
 const Tribesman = require("./entities/tribesman");
 const Totem = require("./entities/totem");
+const Meadow = require("./entities/meadow");
 const { getNewId } = require("./utils");
 
 class GameManager {
@@ -12,6 +13,36 @@ class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+
+    this.createMeadows();
+  }
+
+  createMeadows() {
+    let tempId = getNewId(this);
+    const centerMeadow = new Meadow(tempId, 16384, 16384, 2, 20, Date.now(), true);
+    this.entities.set(centerMeadow.id, centerMeadow);
+
+    let radius = 5000;
+    for (let i = 0; i < 6; i ++) {
+      tempId = getNewId(this);
+      const angleOffset = Math.random() * 10 * Math.PI;
+      const angle = i * (Math.PI / 3) + angleOffset; // 6 meadows evenly spaced with random offset
+      const x = 16384 + radius * Math.cos(angle);
+      const y = 16384 + radius * Math.sin(angle);
+      const tempMeadow = new Meadow(tempId, x, y, 1, 20, Date.now(), false);
+      this.entities.set(tempMeadow.id, tempMeadow);
+    }
+
+    radius = 10000;
+    for (let i = 0; i < 10; i ++) {
+      tempId = getNewId(this);
+      const angleOffset = Math.random() * 10 * Math.PI;
+      const angle = i * (Math.PI / 5) + angleOffset; // 10 meadows evenly spaced with random offset
+      const x = 16384 + radius * Math.cos(angle);
+      const y = 16384 + radius * Math.sin(angle);
+      const tempMeadow = new Meadow(tempId, x, y, 0.5, 20, Date.now(), false);
+      this.entities.set(tempMeadow.id, tempMeadow);
+    }
   }
 
   joinGame(playerName, teamCode) {

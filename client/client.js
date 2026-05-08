@@ -306,7 +306,7 @@ function drawGrid() {
 }
 
 function drawEntity(entity) {
-  if (entity.type == 'tribe') {
+  if (entity.entityType == 'tribe') {
     const tribe = entity;
     // Convert world coordinates to screen coordinates
     const screenX = tribe.x - cameraX;
@@ -374,6 +374,26 @@ function drawEntity(entity) {
       ctx.arc(screenX, screenY, 4, 0, Math.PI * 2);
       ctx.fill();
     });
+  } else if (entity.entityType === 'meadow') {
+    console.log(`Drawing meadow: ${entity.id} at position (${entity.x}, ${entity.y}), size: ${entity.size}, moisture: ${entity.moisture}`);
+    const meadow = entity;
+    const screenX = meadow.x - cameraX;
+    const screenY = meadow.y - cameraY;
+
+    // Only draw if meadow is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = `rgba(100, ${155 + meadow.moisture * 5}, ${100 + meadow.moisture * 2.5})`;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 3 + meadow.size * 100, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
