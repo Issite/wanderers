@@ -231,6 +231,9 @@ function render() {
     drawTribe(tribe);
   });
 
+  // Draw resources
+  drawResources();
+
   // Draw debug info
   drawDebugInfo();
 
@@ -363,6 +366,35 @@ function drawTribe(tribe) {
     ctx.beginPath();
     ctx.arc(screenX, screenY, 4, 0, Math.PI * 2);
     ctx.fill();
+  });
+}
+
+function drawResources() {
+  if (!localTribe.resources) {
+    return;
+  }
+
+  const resourceTypes = Object.keys(localTribe.resources);
+  const resourceColors = {
+    food: '#ff2f2fff',
+    wood: '#6e4200ff',
+    gold: '#f9ca24',
+    water: '#45b7d1'
+  };
+
+  let x = (canvas.width / 2) - ((resourceTypes.length * 100) / 2);
+  const y = 50;
+  resourceTypes.forEach(type => {
+    const color = resourceColors[type] || '#ccc';
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y - 20, 90, 20);
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${type}: ${localTribe.resources[type]}`, x + 40, y - 5);
+    
+    x += 100;
   });
 }
 

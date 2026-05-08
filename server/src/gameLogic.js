@@ -32,6 +32,12 @@ class Tribe {
     this.desiredX = this.x;
     this.desiredY = this.y;
     this.createdAt = new Date();
+    this.resources = {
+        food: 3,
+        wood: 3,
+        gold: 0,
+        water: 0
+    };
   }
 
   assignTeam() {
@@ -81,7 +87,8 @@ class Tribe {
       x: this.x,
       y: this.y,
       maxMoveSpeed: this.maxMoveSpeed,
-      createdAt: this.createdAt
+      createdAt: this.createdAt,
+      resources: this.resources
     };
   }
 }
