@@ -1,7 +1,7 @@
 const Entity = require("./entity");
 
 class Tribesman extends Entity {
-  constructor(id, x, y, tool = "none", armor = 0, health = 100) {
+  constructor(id, x, y, tool = "none", armor = 0, health = 3) {
     super(id, x, y);
     this.health = health;
     this.tool = tool;
@@ -13,6 +13,7 @@ class Tribesman extends Entity {
   toJSON() {
     return {
       id: this.id,
+      type: "tribesman",
       x: this.x,
       y: this.y,
       health: this.health,

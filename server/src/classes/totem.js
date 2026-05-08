@@ -9,6 +9,7 @@ class Totem extends Entity {
     toJSON() {
         return {
             id: this.id,
+            type: "totem",
             x: this.x,
             y: this.y,
             tribeId: this.tribeId

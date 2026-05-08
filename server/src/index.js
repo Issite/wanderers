@@ -97,7 +97,7 @@ function broadcastGameState() {
 
 // Periodic server metrics log
 setInterval(() => {
-  console.log(`[Server Metrics] Updates/sec: ${gameManager.updatesPerSecond}, Active tribes: ${gameManager.tribes.size}, Connected clients: ${wss.clients.size}`);
+  console.log(`[Server Metrics] Updates/sec: ${gameManager.updatesPerSecond}, Connected clients: ${wss.clients.size}`);
 }, 5000);
 
 const PORT = process.env.PORT || 3000;

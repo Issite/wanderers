@@ -137,8 +137,8 @@ function connectWebSocket() {
     const data = JSON.parse(event.data);
 
     if (data.type === 'gameState') {
-      gameState.tribes = data.tribes;
-      localTribe = gameState.tribes.find(t => t.id === tribeID);
+      gameState.entities = data.entities;
+      localTribe = gameState.entities.find(t => t.id === tribeID);
       gameState.updatesPerSecond = data.updatesPerSecond || 0;
     } else if (data.type === 'gameJoined') {
       localTribe = data.tribe;
@@ -227,8 +227,8 @@ function render() {
   drawGrid();
 
   // Draw all tribes
-  gameState.tribes.forEach(tribe => {
-    drawTribe(tribe);
+  gameState.entities.forEach(entity => {
+    drawEntity(entity);
   });
 
   // Draw resources
@@ -300,73 +300,76 @@ function drawGrid() {
   }
 }
 
-function drawTribe(tribe) {
-  // Convert world coordinates to screen coordinates
-  const screenX = tribe.x - cameraX;
-  const screenY = tribe.y - cameraY;
+function drawEntity(entity) {
+  if (entity.type == 'tribe') {
+    const tribe = entity;
+    // Convert world coordinates to screen coordinates
+    const screenX = tribe.x - cameraX;
+    const screenY = tribe.y - cameraY;
 
-  // Only draw if totem is on screen
-  if (
-    screenX + TOTEM_SIZE < 0 ||
-    screenX - TOTEM_SIZE > canvas.width ||
-    screenY + TOTEM_SIZE < 0 ||
-    screenY - TOTEM_SIZE > canvas.height
-  ) {
-    return;
-  }
-
-  // Draw totem (circle)
-  if (tribe.id === tribeID) {
-    ctx.fillStyle = '#888';
-    ctx.beginPath();
-    ctx.arc(localTribe.totem.x - cameraX, localTribe.totem.y - cameraY, TOTEM_SIZE, 0, Math.PI * 2);
-    ctx.fill();
-  } else {
-    ctx.fillStyle = '#666';
-    ctx.beginPath();
-    ctx.arc(screenX, screenY, TOTEM_SIZE, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Draw tribesmen around the tribe's actual position
-  tribe.tribesmen.forEach((tribesman, index) => {
-    const angle = (index / tribe.tribesmen.length) * Math.PI * 2;
-    const distance = TOTEM_SIZE + 40;
-    const worldX = tribe.x + Math.cos(angle) * distance;
-    const worldY = tribe.y + Math.sin(angle) * distance;
-
-    const screenX = worldX - cameraX;
-    const screenY = worldY - cameraY;
-
-    // Only draw if tribesman is on screen
+    // Only draw if totem is on screen
     if (
-      screenX + TRIBESMAN_SIZE / 2 < 0 ||
-      screenX - TRIBESMAN_SIZE / 2 > canvas.width ||
-      screenY + TRIBESMAN_SIZE / 2 < 0 ||
-      screenY - TRIBESMAN_SIZE / 2 > canvas.height
+      screenX + TOTEM_SIZE < 0 ||
+      screenX - TOTEM_SIZE > canvas.width ||
+      screenY + TOTEM_SIZE < 0 ||
+      screenY - TOTEM_SIZE > canvas.height
     ) {
       return;
     }
 
-    // Draw tribesman (square)
-    ctx.fillStyle = '#999';
-    ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY - TRIBESMAN_SIZE / 2, TRIBESMAN_SIZE, TRIBESMAN_SIZE);
+    // Draw totem (circle)
+    if (tribe.id === tribeID) {
+      ctx.fillStyle = '#888';
+      ctx.beginPath();
+      ctx.arc(localTribe.totem.x - cameraX, localTribe.totem.y - cameraY, TOTEM_SIZE, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = '#666';
+      ctx.beginPath();
+      ctx.arc(screenX, screenY, TOTEM_SIZE, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    // Draw health indicator
-    ctx.fillStyle = '#444';
-    ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY + TRIBESMAN_SIZE / 2 + 5, TRIBESMAN_SIZE, 5);
-    
-    ctx.fillStyle = '#66ff66';
-    const healthWidth = (tribesman.health / 3) * TRIBESMAN_SIZE;
-    ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY + TRIBESMAN_SIZE / 2 + 5, healthWidth, 5);
+    // Draw tribesmen around the tribe's actual position
+    tribe.tribesmen.forEach((tribesman, index) => {
+      const angle = (index / tribe.tribesmen.length) * Math.PI * 2;
+      const distance = TOTEM_SIZE + 40;
+      const worldX = tribe.x + Math.cos(angle) * distance;
+      const worldY = tribe.y + Math.sin(angle) * distance;
 
-    // Draw colored dot in center to differentiate tribesman type
-    const dotColor = TRIBESMAN_COLORS[index % TRIBESMAN_COLORS.length];
-    ctx.fillStyle = dotColor;
-    ctx.beginPath();
-    ctx.arc(screenX, screenY, 4, 0, Math.PI * 2);
-    ctx.fill();
-  });
+      const screenX = worldX - cameraX;
+      const screenY = worldY - cameraY;
+
+      // Only draw if tribesman is on screen
+      if (
+        screenX + TRIBESMAN_SIZE / 2 < 0 ||
+        screenX - TRIBESMAN_SIZE / 2 > canvas.width ||
+        screenY + TRIBESMAN_SIZE / 2 < 0 ||
+        screenY - TRIBESMAN_SIZE / 2 > canvas.height
+      ) {
+        return;
+      }
+
+      // Draw tribesman (square)
+      ctx.fillStyle = '#999';
+      ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY - TRIBESMAN_SIZE / 2, TRIBESMAN_SIZE, TRIBESMAN_SIZE);
+
+      // Draw health indicator
+      ctx.fillStyle = '#444';
+      ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY + TRIBESMAN_SIZE / 2 + 5, TRIBESMAN_SIZE, 5);
+      
+      ctx.fillStyle = '#66ff66';
+      const healthWidth = (tribesman.health / 3) * TRIBESMAN_SIZE;
+      ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY + TRIBESMAN_SIZE / 2 + 5, healthWidth, 5);
+
+      // Draw colored dot in center to differentiate tribesman type
+      const dotColor = TRIBESMAN_COLORS[index % TRIBESMAN_COLORS.length];
+      ctx.fillStyle = dotColor;
+      ctx.beginPath();
+      ctx.arc(screenX, screenY, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
 }
 
 function drawResources() {
