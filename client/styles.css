@@ -1,0 +1,128 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: monospace;
+  background: #333;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+html, body, #menu-screen, #game-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.screen.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Menu Screen */
+.menu-container {
+  background: #555;
+  border: 2px solid #777;
+  padding: 40px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.menu-container h1 {
+  color: #ccc;
+  margin-bottom: 30px;
+  font-size: 2em;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ccc;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #777;
+  background: #444;
+  color: #ccc;
+  font-size: 1em;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #999;
+}
+
+.play-button {
+  width: 100%;
+  padding: 10px;
+  background: #666;
+  color: #ccc;
+  border: 1px solid #777;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.play-button:hover {
+  background: #777;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin-top: 15px;
+  display: none;
+  padding: 10px;
+  background: #4a1a1a;
+  border: 1px solid #ff6b6b;
+}
+
+.error-message.show {
+  display: block;
+}
+
+/* Game Screen */
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #222;
+}
+
+.debug-info {
+  background: #555;
+  border: 1px solid #777;
+  padding: 10px;
+  color: #ccc;
+  font-size: 0.9em;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+.debug-info p {
+  margin: 5px 0;
+}

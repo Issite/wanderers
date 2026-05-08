@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wanderers - Join Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="menu-screen" class="screen active">
+    <div class="menu-container">
+      <h1>Wanderers</h1>
+      <form id="join-form">
+        <div class="form-group">
+          <label for="tribe-name">Tribe Name (optional):</label>
+          <input type="text" id="tribe-name" name="tribeName" placeholder="Leave blank for auto-generated name">
+        </div>
+        <div class="form-group">
+          <label for="team-code">Team Code (optional):</label>
+          <input type="text" id="team-code" name="teamCode" placeholder="Leave blank for random team">
+        </div>
+        <button type="submit" class="play-button">Play</button>
+      </form>
+      <div id="error-message" class="error-message"></div>
+    </div>
+  </div>
+
+  <div id="game-screen" class="screen">
+    <canvas id="game-canvas"></canvas>
+    <div id="debug-info" class="debug-info">
+      <p>Tribe: <span id="debug-tribe-name"></span> (ID: <span id="debug-tribe-id"></span>)</p>
+      <p>Team: <span id="debug-team"></span></p>
+    </div>
+  </div>
+
+  <script src="client.js"></script>
+</body>
+</html>
