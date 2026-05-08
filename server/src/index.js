@@ -81,10 +81,10 @@ wss.on('connection', (ws) => {
 
 // Broadcast game state to all connected clients
 function broadcastGameState() {
-  const tribes = gameManager.getAllTribes().map(tribe => tribe.toJSON());
+  const entities = gameManager.getAllEntities().map(entity => entity.toJSON());
   const message = JSON.stringify({
     type: 'gameState',
-    tribes: tribes,
+    entities: entities,
     updatesPerSecond: gameManager.updatesPerSecond
   });
 
@@ -104,3 +104,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = { gameManager };

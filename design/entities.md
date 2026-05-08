@@ -5,13 +5,13 @@ erDiagram
 Tribe {
     int id
     string name
+    int teamId
     string teamCode
     list[Tribesman] tribesmen
     Totem totem
     int x
     int y
     int maxMoveSpeed
-    datetime createdAt
     dict resources
     int resources[food]
     int resources[wood]
