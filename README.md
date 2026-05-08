@@ -49,6 +49,7 @@ The server will be running on `http://localhost:3000`
 
 Next I would like to work on:
 - Resources
+- Minimap
 - Server logic generating a new map
 - A task system for the tribesmen, activated by proximity
 - ~~art~~
