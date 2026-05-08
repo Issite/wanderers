@@ -9,10 +9,10 @@ class Mushroom extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "mushroom",
+            entityType: "mushroom",
             x: this.x,
             y: this.y,
-            mushroomType: this.type
+            type: this.type
         }
     }
 }

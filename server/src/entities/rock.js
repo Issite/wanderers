@@ -10,7 +10,7 @@ class Rock extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "rock",
+            entityType: "rock",
             x: this.x,
             y: this.y,
             size: this.size

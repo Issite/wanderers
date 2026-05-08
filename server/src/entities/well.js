@@ -9,7 +9,7 @@ class Well extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "well",
+            entityType: "well",
             x: this.x,
             y: this.y,
             durability: this.durability

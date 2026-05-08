@@ -9,7 +9,7 @@ class Resource extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "resource",
+            entityType: "resource",
             x: this.x,
             y: this.y,
             resourceType: this.type

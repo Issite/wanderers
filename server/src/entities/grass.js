@@ -8,7 +8,7 @@ class Grass extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "grass",
+            entityType: "grass",
             x: this.x,
             y: this.y
         }

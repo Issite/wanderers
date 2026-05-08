@@ -9,7 +9,7 @@ class Tree extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "tree",
+            entityType: "tree",
             x: this.x,
             y: this.y,
             health: this.health

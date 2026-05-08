@@ -10,7 +10,7 @@ class Campfire extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "campfire",
+            entityType: "campfire",
             x: this.x,
             y: this.y,
             isLit: this.isLit

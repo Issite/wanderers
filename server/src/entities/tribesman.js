@@ -13,7 +13,7 @@ class Tribesman extends Entity {
   toJSON() {
     return {
       id: this.id,
-      type: "tribesman",
+      entityType: "tribesman",
       x: this.x,
       y: this.y,
       health: this.health,

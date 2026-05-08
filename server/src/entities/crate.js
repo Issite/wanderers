@@ -8,7 +8,7 @@ class Crate extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "crate",
+            entityType: "crate",
             x: this.x,
             y: this.y
         }

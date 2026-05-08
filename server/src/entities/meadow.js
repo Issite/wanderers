@@ -12,7 +12,7 @@ class Meadow extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "meadow",
+            entityType: "meadow",
             x: this.x,
             y: this.y,
             size: this.size,

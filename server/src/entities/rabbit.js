@@ -12,7 +12,7 @@ class Rabbit extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "rabbit",
+            entityType: "rabbit",
             x: this.x,
             y: this.y
         }

@@ -9,10 +9,10 @@ class Post extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "post",
+            entityType: "post",
             x: this.x,
             y: this.y,
-            postType: this.type
+            type: this.type
         }
     }
 }
