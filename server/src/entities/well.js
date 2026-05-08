@@ -1,0 +1,20 @@
+const Entity = require("./entity");
+
+class Well extends Entity {
+    constructor(id, x, y, durability) {
+        super(id, x, y);
+        this.durability = durability;
+    }
+
+    toJSON() {
+        return {
+            id: this.id,
+            type: "well",
+            x: this.x,
+            y: this.y,
+            durability: this.durability
+        }
+    }
+}
+
+module.exports = Well;

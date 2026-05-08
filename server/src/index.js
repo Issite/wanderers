@@ -70,7 +70,7 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
-    gameManager.tribes.delete(clients.get(ws)); // Remove tribe associated with this client
+    gameManager.entities.delete(clients.get(ws)); // Remove tribe associated with this client
     clients.delete(ws);
   });
 
@@ -81,10 +81,10 @@ wss.on('connection', (ws) => {
 
 // Broadcast game state to all connected clients
 function broadcastGameState() {
-  const tribes = gameManager.getAllTribes().map(tribe => tribe.toJSON());
+  const entities = gameManager.getAllEntities().map(entity => entity.toJSON());
   const message = JSON.stringify({
     type: 'gameState',
-    tribes: tribes,
+    entities: entities,
     updatesPerSecond: gameManager.updatesPerSecond
   });
 
@@ -97,10 +97,12 @@ function broadcastGameState() {
 
 // Periodic server metrics log
 setInterval(() => {
-  console.log(`[Server Metrics] Updates/sec: ${gameManager.updatesPerSecond}, Active tribes: ${gameManager.tribes.size}, Connected clients: ${wss.clients.size}`);
+  console.log(`[Server Metrics] Updates/sec: ${gameManager.updatesPerSecond}, Connected clients: ${wss.clients.size}`);
 }, 5000);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = { gameManager };

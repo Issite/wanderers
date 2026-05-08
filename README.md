@@ -48,6 +48,9 @@ The server will be running on `http://localhost:3000`
 ## Next Steps
 
 Next I would like to work on:
+- ~~Resources~~ Done! (partially)
+- **Entity classes**
+- Minimap
 - Server logic generating a new map
 - A task system for the tribesmen, activated by proximity
-- ~~art~~
+- ~~art~~(never)
