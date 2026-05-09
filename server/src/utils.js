@@ -3,11 +3,16 @@ function getNewId(gameManager) {
   while (gameManager.entities.has(id)) {
     id = Math.floor(Math.random() * 10000);
   }
+  gameManager.entities.set(id, null); // Reserve the ID
   return id;
+}
+
+function releaseId(gameManager, id) {
+  gameManager.entities.delete(id);
 }
 
 function getGameManager() {
   return require('./index').gameManager;
 }
 
-module.exports = { getNewId, getGameManager };
+module.exports = { getNewId, getGameManager, releaseId };

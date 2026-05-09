@@ -1,10 +1,10 @@
 const Entity = require("./entities/entity");
 
 class Rock extends Entity {
-    constructor(id, x, y, size = 0, health = 4) {
+    constructor(id, x, y, size = 0) {
         super(id, x, y);
         this.size = size;
-        this.health = health;
+        this.health = this.size * 3;
     }
 
     toJSON() {
