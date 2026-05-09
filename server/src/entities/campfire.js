@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Campfire extends Entity {
+export default class Campfire extends Entity {
     constructor(id, x, y, isLit = false, fuel = 60) {
         super(id, x, y);
         this.isLit = isLit;
@@ -10,12 +10,10 @@ class Campfire extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "campfire",
+            entityType: "campfire",
             x: this.x,
             y: this.y,
             isLit: this.isLit
         }
     }
 }
-
-module.exports = Campfire;

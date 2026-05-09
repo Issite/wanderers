@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Mushroom extends Entity {
+export default class Mushroom extends Entity {
     constructor(id, x, y, type = 0) {
         super(id, x, y);
         this.type = type;
@@ -9,12 +9,10 @@ class Mushroom extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "mushroom",
+            entityType: "mushroom",
             x: this.x,
             y: this.y,
-            mushroomType: this.type
+            type: this.type
         }
     }
 }
-
-module.exports = Mushroom;

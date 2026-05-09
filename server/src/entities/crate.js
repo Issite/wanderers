@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Crate extends Entity {
+export default class Crate extends Entity {
     constructor(id, x, y) {
         super(id, x, y);
     }
@@ -8,11 +8,9 @@ class Crate extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "crate",
+            entityType: "crate",
             x: this.x,
             y: this.y
         }
     }
 }
-
-module.exports = Crate;

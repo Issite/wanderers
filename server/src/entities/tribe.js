@@ -1,7 +1,8 @@
-const Entity = require("./entity");
-const Tribesman = require("./tribesman");
-const Totem = require("./totem");
-const { getNewId, getGameManager } = require("../utils");
+import Entity from "./entity.js";
+import Tribesman from "./tribesman.js";
+import Totem from "./totem.js";
+import { getNewId, getGameManager } from "../utils.js";
+const MAX_MOVE_SPEED = 150; // Maximum pixels per second the tribe can move
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode) {
@@ -15,8 +16,7 @@ class Tribe extends Entity {
       new Tribesman(getNewId(gameManager), 0, 0, "bow")
     ];
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
-    // Maximum pixels per second the tribe can move
-    this.maxMoveSpeed = 200;
+    this.maxMoveSpeed = MAX_MOVE_SPEED;
     this.lastUpdateTime = Date.now();
     this.desiredX = this.x;
     this.desiredY = this.y;
@@ -63,7 +63,7 @@ class Tribe extends Entity {
   toJSON() {
     return {
       id: this.id,
-      type: "tribe",
+      entityType: "tribe",
       name: this.name,
       teamId: this.teamId,
       tribesmen: this.tribesmen,
@@ -75,4 +75,4 @@ class Tribe extends Entity {
   }
 }
 
-module.exports = Tribe;
+export default Tribe;

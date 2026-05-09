@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Tribesman extends Entity {
+export default class Tribesman extends Entity {
   constructor(id, x, y, tool = "none", armor = 0, health = 3) {
     super(id, x, y);
     this.health = health;
@@ -13,7 +13,7 @@ class Tribesman extends Entity {
   toJSON() {
     return {
       id: this.id,
-      type: "tribesman",
+      entityType: "tribesman",
       x: this.x,
       y: this.y,
       health: this.health,
@@ -24,5 +24,3 @@ class Tribesman extends Entity {
     }
   }
 }
-
-module.exports = Tribesman;

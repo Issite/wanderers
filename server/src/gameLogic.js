@@ -1,9 +1,10 @@
-const Tribe = require("./entities/tribe");
-const Tribesman = require("./entities/tribesman");
-const Totem = require("./entities/totem");
-const { getNewId } = require("./utils");
+import Tribe from "./entities/tribe.js";
+import Meadow from "./entities/meadow.js";
+import { getNewId } from "./utils.js";
+const MAP_WIDTH = 8192;
+const MAP_HEIGHT = 8192;
 
-class GameManager {
+export class GameManager {
   constructor() {
     this.entities = new Map();
     this.teamCodes = new Map();
@@ -12,6 +13,38 @@ class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+  }
+
+  createWorld() {
+    this.createMeadows();
+  }
+
+  createMeadows() {
+    let tempId = getNewId(this);
+    const centerMeadow = new Meadow(tempId, MAP_WIDTH / 2, MAP_HEIGHT / 2, 2, 20, Date.now(), true, this);
+    this.entities.set(centerMeadow.id, centerMeadow);
+
+    let radius = MAP_HEIGHT / 6;
+    for (let i = 0; i < 6; i ++) {
+      tempId = getNewId(this);
+      const angleOffset = Math.random() / 10 * Math.PI;
+      const angle = i * (Math.PI / 3) + angleOffset; // 6 meadows evenly spaced with random offset
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
+      const tempMeadow = new Meadow(tempId, x, y, 1, 20, Date.now(), false, this);
+      this.entities.set(tempMeadow.id, tempMeadow);
+    }
+
+    radius = MAP_HEIGHT / 3;
+    for (let i = 0; i < 10; i ++) {
+      tempId = getNewId(this);
+      const angleOffset = Math.random() / 10 * Math.PI;
+      const angle = i * (Math.PI / 5) + angleOffset; // 10 meadows evenly spaced with random offset
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
+      const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false, this);
+      this.entities.set(tempMeadow.id, tempMeadow);
+    }
   }
 
   joinGame(playerName, teamCode) {
@@ -28,8 +61,8 @@ class GameManager {
     } else {
       teamId = Math.random() < 0.5 ? 1 : 2; // Randomly assign to team 1 or 2      
     }
-    const x = Math.random() * 32768; // Random starting position
-    const y = Math.random() * 32768;
+    const x = Math.random() * MAP_WIDTH; // Random starting position
+    const y = Math.random() * MAP_HEIGHT;
     const tribe = new Tribe(id, x, y, name, teamId, teamCode);
     this.entities.set(tribe.id, tribe);
     return tribe;
@@ -48,11 +81,11 @@ class GameManager {
   }
 
   startUpdateLoop() {
-    // Update tribe positions every 16ms (~60fps)
+    // Update world every 16ms (~60fps)
     this.updateInterval = setInterval(() => {
       const now = Date.now();
       this.entities.forEach(entity => {
-        if (entity.update) {
+        if (entity && typeof entity.update === 'function') {
           entity.update();
         }
       });
@@ -78,5 +111,3 @@ class GameManager {
     }
   }
 }
-
-module.exports = { GameManager, Tribe, Totem, Tribesman };

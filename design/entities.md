@@ -117,4 +117,12 @@ Post {
     int type
 }
 
+Cloud {
+    int id
+    int x
+    int y
+    Meadow target
+    bool isRaining
+}
+
 ```

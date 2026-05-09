@@ -1,3 +1,11 @@
+import {
+  MAP_HEIGHT,
+  MAP_WIDTH,
+  MAX_MOVE_SPEED,
+  MEADOW_BASE_SIZE,
+  MEADOW_SIZE_FACTOR
+} from "../shared/constants.js";
+
 let tribeID = null;
 let localTribe = null;
 let lastTotemUpdateTime = 0;
@@ -6,8 +14,6 @@ let canvas = null;
 let ctx = null;
 let gameState = { tribes: [], updatesPerSecond: 0 };
 
-const MAP_WIDTH = 32768;
-const MAP_HEIGHT = 32768;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
@@ -20,13 +26,11 @@ let cameraX = 0;
 let cameraY = 0;
 let targetCameraX = 0;
 let targetCameraY = 0;
-const CAMERA_SPEED = 500; // pixels per second
 
 // FPS tracking
 let frameCount = 0;
 let lastFpsTime = Date.now();
 let currentFps = 0;
-let lastFrameTime = Date.now();
 
 // DOM Elements
 const menuScreen = document.getElementById('menu-screen');
@@ -220,10 +224,6 @@ function render() {
   cameraX = localTribe.x - canvas.width / 2;
   cameraY = localTribe.y - canvas.height / 2;
 
-  // Clamp camera to map bounds
-  cameraX = Math.max(0, Math.min(MAP_WIDTH - canvas.width, cameraX));
-  cameraY = Math.max(0, Math.min(MAP_HEIGHT - canvas.height, cameraY));
-
   // Clear canvas
   ctx.fillStyle = '#222';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -306,7 +306,7 @@ function drawGrid() {
 }
 
 function drawEntity(entity) {
-  if (entity.type == 'tribe') {
+  if (entity.entityType === 'tribe') {
     const tribe = entity;
     // Convert world coordinates to screen coordinates
     const screenX = tribe.x - cameraX;
@@ -374,6 +374,100 @@ function drawEntity(entity) {
       ctx.arc(screenX, screenY, 4, 0, Math.PI * 2);
       ctx.fill();
     });
+  } else if (entity.entityType === 'meadow') {
+    const meadow = entity;
+    const screenX = meadow.x - cameraX;
+    const screenY = meadow.y - cameraY;
+
+    // Only draw if meadow is on screen
+    if (
+      screenX + 150 < 0 ||
+      screenX - 150 > canvas.width ||
+      screenY + 150 < 0 ||
+      screenY - 150 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = `rgba(100, ${155 + meadow.moisture * 5}, ${100 + meadow.moisture * 2.5})`;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, (MEADOW_BASE_SIZE + meadow.size) * MEADOW_SIZE_FACTOR, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (entity.entityType === 'mushroom') {
+    const mushroom = entity;
+    const screenX = mushroom.x - cameraX;
+    const screenY = mushroom.y - cameraY;
+
+    // Only draw if mushroom is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = `hsl(${mushroom.type * 45}, 70%, 50%)`;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 10, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (entity.entityType === 'grass') {
+    const grass = entity;
+    const screenX = grass.x - cameraX;
+    const screenY = grass.y - cameraY;
+
+    // Only draw if grass is on screen
+    if (
+      screenX + 25 < 0 ||
+      screenX - 25 > canvas.width ||
+      screenY + 25 < 0 ||
+      screenY - 25 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = '#55aa55';
+    ctx.fillRect(screenX - 5, screenY - 5, 40, 25);
+  } else if (entity.entityType === 'rock') {
+    const rock = entity;
+    const screenX = rock.x - cameraX;
+    const screenY = rock.y - cameraY;
+
+    // Only draw if rock is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = 'hsla(30, 10%,' + (40 + rock.health) + '%, 1.00)';
+    ctx.fillRect(screenX - rock.size * 5, screenY - rock.size * 5, rock.size * 25, rock.size * 35);
+  } else if (entity.entityType === 'tree') {
+    const tree = entity;
+    const screenX = tree.x - cameraX;
+    const screenY = tree.y - cameraY;
+
+    // Only draw if tree is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = 'hsla(30, 50%,' + (10 + tree.health * 5) + '%, 1.00)';
+    ctx.fillRect(screenX - 10, screenY - 10, 30, 70);
+    
+    ctx.fillStyle = 'hsla(329, 100%, 40%, 1.00)';
+    ctx.beginPath();
+    ctx.arc(screenX, screenY - 45, 50, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 

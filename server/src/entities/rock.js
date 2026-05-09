@@ -1,21 +1,20 @@
-const Entity = require("./entities/entity");
+import Entity from "./entity.js";
 
-class Rock extends Entity {
-    constructor(id, x, y, size = 0, health = 4) {
+export default class Rock extends Entity {
+    constructor(id, x, y, size = 0) {
         super(id, x, y);
         this.size = size;
-        this.health = health;
+        this.health = this.size * 3;
     }
 
     toJSON() {
         return {
             id: this.id,
-            type: "rock",
+            entityType: "rock",
             x: this.x,
             y: this.y,
-            size: this.size
+            size: this.size,
+            health: this.health
         }
     }
 }
-
-module.exports = Rock;

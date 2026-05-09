@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Resource extends Entity {
+export default class Resource extends Entity {
     constructor(id, x, y, type) {
         super(id, x, y);
         this.type = type;
@@ -9,12 +9,10 @@ class Resource extends Entity {
     toJSON() {
         return {
             id: this.id,
-            type: "resource",
+            entityType: "resource",
             x: this.x,
             y: this.y,
             resourceType: this.type
         }
     }
 }
-
-module.exports = Resource;
