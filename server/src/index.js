@@ -9,6 +9,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const gameManager = new GameManager();
+module.exports.gameManager = gameManager; // Export game manager for use in other modules
+gameManager.createWorld(); // Initialize meadows at server start
 const clients = new Map();
 let lastBroadcastTime = 0;
 const BROADCAST_INTERVAL = 80; // Broadcast at most every 80ms (~12.5 updates/sec)
@@ -81,7 +83,7 @@ wss.on('connection', (ws) => {
 
 // Broadcast game state to all connected clients
 function broadcastGameState() {
-  const entities = gameManager.getAllEntities().map(entity => entity.toJSON());
+  const entities = gameManager.getAllEntities().map(entity => (entity && typeof entity.toJSON === 'function') ? entity.toJSON() : null).filter(Boolean);
   const message = JSON.stringify({
     type: 'gameState',
     entities: entities,

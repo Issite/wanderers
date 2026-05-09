@@ -15,13 +15,15 @@ class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+  }
 
+  createWorld() {
     this.createMeadows();
   }
 
   createMeadows() {
     let tempId = getNewId(this);
-    const centerMeadow = new Meadow(tempId, MAP_WIDTH / 2, MAP_HEIGHT / 2, 2, 20, Date.now(), true);
+    const centerMeadow = new Meadow(tempId, MAP_WIDTH / 2, MAP_HEIGHT / 2, 2, 20, Date.now(), true, this);
     this.entities.set(centerMeadow.id, centerMeadow);
 
     let radius = MAP_HEIGHT / 6;
@@ -31,7 +33,7 @@ class GameManager {
       const angle = i * (Math.PI / 3) + angleOffset; // 6 meadows evenly spaced with random offset
       const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
       const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
-      const tempMeadow = new Meadow(tempId, x, y, 1, 20, Date.now(), false);
+      const tempMeadow = new Meadow(tempId, x, y, 1, 20, Date.now(), false, this);
       this.entities.set(tempMeadow.id, tempMeadow);
     }
 
@@ -42,7 +44,7 @@ class GameManager {
       const angle = i * (Math.PI / 5) + angleOffset; // 10 meadows evenly spaced with random offset
       const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
       const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
-      const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false);
+      const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false, this);
       this.entities.set(tempMeadow.id, tempMeadow);
     }
   }
@@ -81,11 +83,11 @@ class GameManager {
   }
 
   startUpdateLoop() {
-    // Update tribe positions every 16ms (~60fps)
+    // Update world every 16ms (~60fps)
     this.updateInterval = setInterval(() => {
       const now = Date.now();
       this.entities.forEach(entity => {
-        if (entity.update) {
+        if (entity && typeof entity.update === 'function') {
           entity.update();
         }
       });

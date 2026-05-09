@@ -1,11 +1,14 @@
+import {
+    MEADOW_BASE_SIZE,
+    MEADOW_SIZE_FACTOR
+} from "../../shared/constants";
 const Entity = require("./entity");
 const Mushroom = require("./mushroom");
 const Tree = require("./tree");
 const Grass = require("./grass");
 const Rock = require("./rock");
 const { getNewId, getGameManager, releaseId } = require("../utils");
-const MEADOW_BASE_SIZE = 3;
-const MEADOW_SIZE_FACTOR = 100;
+
 
 class Meadow extends Entity {
     constructor(id, x, y, size = 0, moisture = 20, lastWateredTime = Date.now(), isCenter = false) {
@@ -20,6 +23,8 @@ class Meadow extends Entity {
 
     getRainedOnIdiot() {
         let newGrowths = [];
+        const pixelSize = (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR;
+
         // Filter out removed growths, and count each type
         const gameManager = getGameManager();
         this.growths = this.growths.filter(growth => 
@@ -33,9 +38,9 @@ class Meadow extends Entity {
         // Generate mushrooms (3 per meadow size) with 50% chance each
         for (let i = 0; i < (this.size * 3) - mushroomCount; i++) {
             if (Math.random() < 0.5) {
-                const mushroomId = getNewId();
+                const mushroomId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
-                const radius = (0.5 + Math.random() * 0.5) * (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR; // Random radius based on meadow size
+                const radius = (0.5 + Math.random() * 0.5) * pixelSize; // Random radius based on meadow size
                 const mushroomX = this.x + radius * Math.cos(angle);
                 const mushroomY = this.y + radius * Math.sin(angle);
                 const mushroomType = Math.floor(Math.random() * 8); // Random mushroom type
@@ -48,9 +53,9 @@ class Meadow extends Entity {
         // Generate grass (2 per meadow size) with 90% chance each
         for (let i = 0; i < (this.size * 2) - grassCount; i++) {
             if (Math.random() < 0.9) {
-                const grassId = getNewId();
+                const grassId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
-                const radius = Math.random() * (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR; // Random radius based on meadow size
+                const radius = Math.random() * pixelSize;
                 const grassX = this.x + radius * Math.cos(angle);
                 const grassY = this.y + radius * Math.sin(angle);
                 const grass = new Grass(grassId, grassX, grassY);
@@ -61,9 +66,9 @@ class Meadow extends Entity {
 
         // Generate rocks (2 of size meadowSize - 2*(1 at 50% chance))
         for (let i = 0; i < 2 - rockCount; i++) {
-            const rockId = getNewId();
+            const rockId = getNewId(gameManager);
             const angle = Math.random() * 2 * Math.PI;
-            const radius = (0.25 + Math.random() * 0.5) * (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR;
+            const radius = (0.25 + Math.random() * 0.5) * pixelSize;
             const rockX = this.x + radius * Math.cos(angle);
             const rockY = this.y + radius * Math.sin(angle);
             const rockSize = this.size - (Math.random() < 0.5 ? 1 : 0) - (Math.random() < 0.5 ? 1 : 0);
@@ -79,9 +84,9 @@ class Meadow extends Entity {
         // Generate Trees (1 per meadow size) with 70% chance each
         for (let i = 0; i < this.size - treeCount; i++) {
             if (Math.random() < 0.7) {
-                const treeId = getNewId();
+                const treeId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
-                const radius = (Math.random() * 0.5) * (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR; // Random radius based on meadow size
+                const radius = (Math.random() * 0.5) * pixelSize;
                 const treeX = this.x + radius * Math.cos(angle);
                 const treeY = this.y + radius * Math.sin(angle);
                 const tree = new Tree(treeId, treeX, treeY, 4);

@@ -1,4 +1,4 @@
-const Entity = require("./entities/entity");
+const Entity = require("./entity");
 
 class Rock extends Entity {
     constructor(id, x, y, size = 0) {
