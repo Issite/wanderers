@@ -1,13 +1,13 @@
 import {
     MEADOW_BASE_SIZE,
     MEADOW_SIZE_FACTOR
-} from "../../shared/constants";
-const Entity = require("./entity");
-const Mushroom = require("./mushroom");
-const Tree = require("./tree");
-const Grass = require("./grass");
-const Rock = require("./rock");
-const { getNewId, getGameManager, releaseId } = require("../utils");
+} from "../../../shared/constants.js";
+import Entity from "./entity.js";
+import Mushroom from "./mushroom.js";
+import Tree from "./tree.js";
+import Grass from "./grass.js";
+import Rock from "./rock.js";
+import { getNewId, getGameManager, releaseId } from "../utils.js";
 
 
 class Meadow extends Entity {
@@ -117,4 +117,4 @@ class Meadow extends Entity {
     }
 }
 
-module.exports = Meadow;
+export default Meadow;

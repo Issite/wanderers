@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Cloud extends Entity {
+export default class Cloud extends Entity {
     constructor(id, x, y, target, isRaining = false) {
         super(id, x, y);
         this.target = target;
@@ -17,5 +17,3 @@ class Cloud extends Entity {
         }
     }
 }
-
-module.exports = Cloud;

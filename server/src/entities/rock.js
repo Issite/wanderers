@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Rock extends Entity {
+export default class Rock extends Entity {
     constructor(id, x, y, size = 0) {
         super(id, x, y);
         this.size = size;
@@ -17,5 +17,3 @@ class Rock extends Entity {
         }
     }
 }
-
-module.exports = Rock;

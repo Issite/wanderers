@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Well extends Entity {
+export default class Well extends Entity {
     constructor(id, x, y, durability) {
         super(id, x, y);
         this.durability = durability;
@@ -16,5 +16,3 @@ class Well extends Entity {
         }
     }
 }
-
-module.exports = Well;

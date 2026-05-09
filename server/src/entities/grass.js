@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Grass extends Entity {
+export default class Grass extends Entity {
     constructor(id, x, y) {
         super(id, x, y);
     }
@@ -14,5 +14,3 @@ class Grass extends Entity {
         }
     }
 }
-
-module.exports = Grass;

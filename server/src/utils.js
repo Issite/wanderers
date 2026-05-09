@@ -11,8 +11,14 @@ function releaseId(gameManager, id) {
   gameManager.entities.delete(id);
 }
 
-function getGameManager() {
-  return require('./index').gameManager;
+let gameManager;
+
+export function setGameManager(gm) {
+  gameManager = gm;
 }
 
-module.exports = { getNewId, getGameManager, releaseId };
+export function getGameManager() {
+  return gameManager;
+}
+
+export { getNewId, releaseId };

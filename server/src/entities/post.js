@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Post extends Entity {
+export default class Post extends Entity {
     constructor(id, x, y, type = 0) {
         super(id, x, y);
         this.type = type;
@@ -16,5 +16,3 @@ class Post extends Entity {
         }
     }
 }
-
-module.exports = Post;

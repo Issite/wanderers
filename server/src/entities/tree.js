@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Tree extends Entity {
+export default class Tree extends Entity {
     constructor(id, x, y, health) {
         super(id, x, y);
         this.health = health;
@@ -16,5 +16,3 @@ class Tree extends Entity {
         }
     }
 }
-
-module.exports = Tree;

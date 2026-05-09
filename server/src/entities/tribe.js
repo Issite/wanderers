@@ -1,7 +1,7 @@
-const Entity = require("./entity");
-const Tribesman = require("./tribesman");
-const Totem = require("./totem");
-const { getNewId, getGameManager } = require("../utils");
+import Entity from "./entity.js";
+import Tribesman from "./tribesman.js";
+import Totem from "./totem.js";
+import { getNewId, getGameManager } from "../utils.js";
 const MAX_MOVE_SPEED = 150; // Maximum pixels per second the tribe can move
 
 class Tribe extends Entity {
@@ -75,4 +75,4 @@ class Tribe extends Entity {
   }
 }
 
-module.exports = Tribe;
+export default Tribe;

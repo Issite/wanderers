@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Crate extends Entity {
+export default class Crate extends Entity {
     constructor(id, x, y) {
         super(id, x, y);
     }
@@ -14,5 +14,3 @@ class Crate extends Entity {
         }
     }
 }
-
-module.exports = Crate;

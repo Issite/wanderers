@@ -1,12 +1,10 @@
-const Tribe = require("./entities/tribe");
-const Tribesman = require("./entities/tribesman");
-const Totem = require("./entities/totem");
-const Meadow = require("./entities/meadow");
-const { getNewId } = require("./utils");
+import Tribe from "./entities/tribe.js";
+import Meadow from "./entities/meadow.js";
+import { getNewId } from "./utils.js";
 const MAP_WIDTH = 8192;
 const MAP_HEIGHT = 8192;
 
-class GameManager {
+export class GameManager {
   constructor() {
     this.entities = new Map();
     this.teamCodes = new Map();
@@ -113,5 +111,3 @@ class GameManager {
     }
   }
 }
-
-module.exports = { GameManager, Tribe, Totem, Tribesman };

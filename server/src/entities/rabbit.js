@@ -1,7 +1,7 @@
-const Entity = require("./entity");
-const Grass = require("./grass");
+import Entity from "./entity.js";
+import Grass from "./grass.js";
 
-class Rabbit extends Entity {
+export default class Rabbit extends Entity {
     constructor(id, x, y, health = 2, target = null, cooldown = 0) {
         super(id, x, y);
         this.health = health;
@@ -18,5 +18,3 @@ class Rabbit extends Entity {
         }
     }
 }
-
-module.exports = Rabbit;

@@ -1,6 +1,6 @@
-const Entity = require("./entity");
+import Entity from "./entity.js";
 
-class Totem extends Entity {
+export default class Totem extends Entity {
     constructor(id, x, y, tribeId) {
         super(id, x, y);
         this.tribeId = tribeId;
@@ -16,5 +16,3 @@ class Totem extends Entity {
         };
     }
 }
-
-module.exports = Totem;

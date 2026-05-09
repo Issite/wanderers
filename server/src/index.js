@@ -1,15 +1,21 @@
-const express = require('express');
-const WebSocket = require('ws');
-const http = require('http');
-const path = require('path');
-const { GameManager } = require('./gameLogic');
+import express from 'express';
+import { WebSocketServer } from 'ws';
+import http from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { GameManager } from './gameLogic.js';
+import { setGameManager } from './utils.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+app.use('/shared', express.static(path.join(__dirname, '../../shared')));
+const wss = new WebSocketServer({ server });
 
 const gameManager = new GameManager();
-module.exports.gameManager = gameManager; // Export game manager for use in other modules
+setGameManager(gameManager); // Set gameManager for utils.js
 gameManager.createWorld(); // Initialize meadows at server start
 const clients = new Map();
 let lastBroadcastTime = 0;
@@ -91,7 +97,7 @@ function broadcastGameState() {
   });
 
   wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
+    if (client.readyState === 1) { // 1 is OPEN state
       client.send(message);
     }
   });
@@ -107,4 +113,4 @@ server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-module.exports = { gameManager };
+export { gameManager };
