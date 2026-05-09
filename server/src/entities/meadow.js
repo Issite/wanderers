@@ -11,22 +11,20 @@ import { getNewId, getGameManager, releaseId } from "../utils.js";
 
 
 class Meadow extends Entity {
-    constructor(id, x, y, size = 0, moisture = 20, lastWateredTime = Date.now(), isCenter = false) {
+    constructor(id, x, y, size = 0, moisture = 20, lastWateredTime = Date.now(), isCenter = false, gameManager = getGameManager()) {
         super(id, x, y);
         this.size = size;
         this.moisture = moisture;
         this.lastWateredTime = lastWateredTime;
         this.isCenter = isCenter;
         this.growths = [];
-        this.getRainedOnIdiot();
+        this.getRainedOnIdiot(gameManager);
     }
 
-    getRainedOnIdiot() {
-        let newGrowths = [];
+    getRainedOnIdiot(gameManager) {
         const pixelSize = (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR;
 
         // Filter out removed growths, and count each type
-        const gameManager = getGameManager();
         this.growths = this.growths.filter(growth => 
             gameManager.entities.values().includes(growth)
         );
@@ -45,7 +43,7 @@ class Meadow extends Entity {
                 const mushroomY = this.y + radius * Math.sin(angle);
                 const mushroomType = Math.floor(Math.random() * 8); // Random mushroom type
                 const mushroom = new Mushroom(mushroomId, mushroomX, mushroomY, mushroomType);
-                newGrowths.push(mushroom);
+                gameManager.entities.set(mushroomId, mushroom);
                 this.growths.push(mushroom);
             }
         }
@@ -59,7 +57,7 @@ class Meadow extends Entity {
                 const grassX = this.x + radius * Math.cos(angle);
                 const grassY = this.y + radius * Math.sin(angle);
                 const grass = new Grass(grassId, grassX, grassY);
-                newGrowths.push(grass);
+                gameManager.entities.set(grassId, grass);
                 this.growths.push(grass);
             }
         }
@@ -74,7 +72,7 @@ class Meadow extends Entity {
             const rockSize = this.size - (Math.random() < 0.5 ? 1 : 0) - (Math.random() < 0.5 ? 1 : 0);
             if (this.size > 0 && rockSize > 0) {
                 const rock = new Rock(rockId, rockX, rockY, rockSize);
-                newGrowths.push(rock);
+                gameManager.entities.set(rockId, rock);
                 this.growths.push(rock);
             } else {
                 releaseId(gameManager, rockId);
@@ -90,14 +88,13 @@ class Meadow extends Entity {
                 const treeX = this.x + radius * Math.cos(angle);
                 const treeY = this.y + radius * Math.sin(angle);
                 const tree = new Tree(treeId, treeX, treeY, 4);
-                newGrowths.push(tree);
+                gameManager.entities.set(treeId, tree);
                 this.growths.push(tree);
             }
         }
 
         this.lastWateredTime = Date.now();
         this.getMoisturizedIdiot();
-        return newGrowths;
     }
 
     getMoisturizedIdiot() {

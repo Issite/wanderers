@@ -26,13 +26,11 @@ let cameraX = 0;
 let cameraY = 0;
 let targetCameraX = 0;
 let targetCameraY = 0;
-const CAMERA_SPEED = 500; // pixels per second
 
 // FPS tracking
 let frameCount = 0;
 let lastFpsTime = Date.now();
 let currentFps = 0;
-let lastFrameTime = Date.now();
 
 // DOM Elements
 const menuScreen = document.getElementById('menu-screen');
@@ -388,7 +386,7 @@ function drawEntity(entity) {
       screenY + 150 < 0 ||
       screenY - 150 > canvas.height
     ) {
-      // return;
+      return;
     }
 
     ctx.fillStyle = `rgba(100, ${155 + meadow.moisture * 5}, ${100 + meadow.moisture * 2.5})`;
