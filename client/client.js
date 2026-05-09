@@ -6,8 +6,6 @@ let canvas = null;
 let ctx = null;
 let gameState = { tribes: [], updatesPerSecond: 0 };
 
-const MAP_WIDTH = 32768;
-const MAP_HEIGHT = 32768;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
@@ -220,10 +218,6 @@ function render() {
   cameraX = localTribe.x - canvas.width / 2;
   cameraY = localTribe.y - canvas.height / 2;
 
-  // Clamp camera to map bounds
-  cameraX = Math.max(0, Math.min(MAP_WIDTH - canvas.width, cameraX));
-  cameraY = Math.max(0, Math.min(MAP_HEIGHT - canvas.height, cameraY));
-
   // Clear canvas
   ctx.fillStyle = '#222';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -382,12 +376,12 @@ function drawEntity(entity) {
 
     // Only draw if meadow is on screen
     if (
-      screenX + 20 < 0 ||
-      screenX - 20 > canvas.width ||
-      screenY + 20 < 0 ||
-      screenY - 20 > canvas.height
+      screenX + 150 < 0 ||
+      screenX - 150 > canvas.width ||
+      screenY + 150 < 0 ||
+      screenY - 150 > canvas.height
     ) {
-      return;
+      // return;
     }
 
     ctx.fillStyle = `rgba(100, ${155 + meadow.moisture * 5}, ${100 + meadow.moisture * 2.5})`;

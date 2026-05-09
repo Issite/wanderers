@@ -2,6 +2,7 @@ const Entity = require("./entity");
 const Tribesman = require("./tribesman");
 const Totem = require("./totem");
 const { getNewId, getGameManager } = require("../utils");
+const MAX_MOVE_SPEED = 150; // Maximum pixels per second the tribe can move
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode) {
@@ -15,8 +16,7 @@ class Tribe extends Entity {
       new Tribesman(getNewId(gameManager), 0, 0, "bow")
     ];
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
-    // Maximum pixels per second the tribe can move
-    this.maxMoveSpeed = 200;
+    this.maxMoveSpeed = MAX_MOVE_SPEED;
     this.lastUpdateTime = Date.now();
     this.desiredX = this.x;
     this.desiredY = this.y;

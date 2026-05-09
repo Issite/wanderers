@@ -3,6 +3,8 @@ const Tribesman = require("./entities/tribesman");
 const Totem = require("./entities/totem");
 const Meadow = require("./entities/meadow");
 const { getNewId } = require("./utils");
+const MAP_WIDTH = 8192;
+const MAP_HEIGHT = 8192;
 
 class GameManager {
   constructor() {
@@ -19,28 +21,28 @@ class GameManager {
 
   createMeadows() {
     let tempId = getNewId(this);
-    const centerMeadow = new Meadow(tempId, 16384, 16384, 2, 20, Date.now(), true);
+    const centerMeadow = new Meadow(tempId, MAP_WIDTH / 2, MAP_HEIGHT / 2, 2, 20, Date.now(), true);
     this.entities.set(centerMeadow.id, centerMeadow);
 
-    let radius = 5000;
+    let radius = MAP_HEIGHT / 6;
     for (let i = 0; i < 6; i ++) {
       tempId = getNewId(this);
-      const angleOffset = Math.random() * 10 * Math.PI;
+      const angleOffset = Math.random() / 10 * Math.PI;
       const angle = i * (Math.PI / 3) + angleOffset; // 6 meadows evenly spaced with random offset
-      const x = 16384 + radius * Math.cos(angle);
-      const y = 16384 + radius * Math.sin(angle);
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
       const tempMeadow = new Meadow(tempId, x, y, 1, 20, Date.now(), false);
       this.entities.set(tempMeadow.id, tempMeadow);
     }
 
-    radius = 10000;
+    radius = MAP_HEIGHT / 3;
     for (let i = 0; i < 10; i ++) {
       tempId = getNewId(this);
-      const angleOffset = Math.random() * 10 * Math.PI;
+      const angleOffset = Math.random() / 10 * Math.PI;
       const angle = i * (Math.PI / 5) + angleOffset; // 10 meadows evenly spaced with random offset
-      const x = 16384 + radius * Math.cos(angle);
-      const y = 16384 + radius * Math.sin(angle);
-      const tempMeadow = new Meadow(tempId, x, y, 0.5, 20, Date.now(), false);
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
+      const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false);
       this.entities.set(tempMeadow.id, tempMeadow);
     }
   }
@@ -59,8 +61,8 @@ class GameManager {
     } else {
       teamId = Math.random() < 0.5 ? 1 : 2; // Randomly assign to team 1 or 2      
     }
-    const x = Math.random() * 32768; // Random starting position
-    const y = Math.random() * 32768;
+    const x = Math.random() * MAP_WIDTH; // Random starting position
+    const y = Math.random() * MAP_HEIGHT;
     const tribe = new Tribe(id, x, y, name, teamId, teamCode);
     this.entities.set(tribe.id, tribe);
     return tribe;
