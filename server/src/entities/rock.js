@@ -13,7 +13,8 @@ export default class Rock extends Entity {
             entityType: "rock",
             x: this.x,
             y: this.y,
-            size: this.size
+            size: this.size,
+            health: this.health
         }
     }
 }

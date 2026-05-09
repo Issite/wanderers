@@ -412,6 +412,62 @@ function drawEntity(entity) {
     ctx.beginPath();
     ctx.arc(screenX, screenY, 10, 0, Math.PI * 2);
     ctx.fill();
+  } else if (entity.entityType === 'grass') {
+    const grass = entity;
+    const screenX = grass.x - cameraX;
+    const screenY = grass.y - cameraY;
+
+    // Only draw if grass is on screen
+    if (
+      screenX + 25 < 0 ||
+      screenX - 25 > canvas.width ||
+      screenY + 25 < 0 ||
+      screenY - 25 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = '#55aa55';
+    ctx.fillRect(screenX - 5, screenY - 5, 40, 25);
+  } else if (entity.entityType === 'rock') {
+    const rock = entity;
+    const screenX = rock.x - cameraX;
+    const screenY = rock.y - cameraY;
+
+    // Only draw if rock is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = 'hsla(30, 10%,' + (40 + rock.health) + '%, 1.00)';
+    ctx.fillRect(screenX - rock.size * 5, screenY - rock.size * 5, rock.size * 25, rock.size * 35);
+  } else if (entity.entityType === 'tree') {
+    const tree = entity;
+    const screenX = tree.x - cameraX;
+    const screenY = tree.y - cameraY;
+
+    // Only draw if tree is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = 'hsla(30, 50%,' + (10 + tree.health * 5) + '%, 1.00)';
+    ctx.fillRect(screenX - 10, screenY - 10, 30, 70);
+    
+    ctx.fillStyle = 'hsla(329, 100%, 40%, 1.00)';
+    ctx.beginPath();
+    ctx.arc(screenX, screenY - 45, 50, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 

@@ -34,7 +34,7 @@ class Meadow extends Entity {
         const rockCount = this.growths.filter(g => g.isInstanceOf(Rock)).length;
 
         // Generate mushrooms (3 per meadow size) with 50% chance each
-        for (let i = 0; i < (this.size * 3) - mushroomCount; i++) {
+        for (let i = 0; i < (this.size + 1) * 3 - mushroomCount; i++) {
             if (Math.random() < 0.5) {
                 const mushroomId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
@@ -49,7 +49,7 @@ class Meadow extends Entity {
         }
 
         // Generate grass (2 per meadow size) with 90% chance each
-        for (let i = 0; i < (this.size * 2) - grassCount; i++) {
+        for (let i = 0; i < (this.size + 1) * 2 - grassCount; i++) {
             if (Math.random() < 0.9) {
                 const grassId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
@@ -62,14 +62,14 @@ class Meadow extends Entity {
             }
         }
 
-        // Generate rocks (2 of size meadowSize - 2*(1 at 50% chance))
+        // Generate rocks (2 of size (meadowSize+1) - 2*(1 at 50% chance))
         for (let i = 0; i < 2 - rockCount; i++) {
             const rockId = getNewId(gameManager);
             const angle = Math.random() * 2 * Math.PI;
             const radius = (0.25 + Math.random() * 0.5) * pixelSize;
             const rockX = this.x + radius * Math.cos(angle);
             const rockY = this.y + radius * Math.sin(angle);
-            const rockSize = this.size - (Math.random() < 0.5 ? 1 : 0) - (Math.random() < 0.5 ? 1 : 0);
+            const rockSize = this.size + 1 - (Math.random() < 0.5 ? 1 : 0) - (Math.random() < 0.5 ? 1 : 0);
             if (this.size > 0 && rockSize > 0) {
                 const rock = new Rock(rockId, rockX, rockY, rockSize);
                 gameManager.entities.set(rockId, rock);
@@ -79,8 +79,8 @@ class Meadow extends Entity {
             }
         }
 
-        // Generate Trees (1 per meadow size) with 70% chance each
-        for (let i = 0; i < this.size - treeCount; i++) {
+        // Generate Trees (1 per meadow size + 1) with 70% chance each
+        for (let i = 0; i < this.size + 1 - treeCount; i++) {
             if (Math.random() < 0.7) {
                 const treeId = getNewId(gameManager);
                 const angle = Math.random() * 2 * Math.PI;
