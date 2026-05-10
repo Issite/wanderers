@@ -24,8 +24,6 @@ let dragOffset = { x: 0, y: 0 };
 // Camera position (follows player's tribe actual position)
 let cameraX = 0;
 let cameraY = 0;
-let targetCameraX = 0;
-let targetCameraY = 0;
 
 // FPS tracking
 let frameCount = 0;
@@ -154,8 +152,6 @@ function connectWebSocket() {
       console.log(`Joined game with tribe ID: ${tribeID}, name: ${localTribe.name}`);
       cameraX = localTribe.x - canvas.width / 2;
       cameraY = localTribe.y - canvas.height / 2;
-      targetCameraX = cameraX;
-      targetCameraY = cameraY;
       showGameScreen();
     } else if (data.type === 'registered') {
       console.log('Registered with tribe ID:', data.tribeId);
@@ -468,6 +464,23 @@ function drawEntity(entity) {
     ctx.beginPath();
     ctx.arc(screenX, screenY - 45, 50, 0, Math.PI * 2);
     ctx.fill();
+  } else if (entity.entityType === 'post') {
+    const post = entity;
+    const screenX = post.x - cameraX;
+    const screenY = post.y - cameraY;
+
+    // Only draw if post is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = ['#ff4444', '#44ff44', '#4444ff'][post.type % 3];
+    ctx.fillRect(screenX - 35, screenY - 25, 70, 50);
   }
 }
 

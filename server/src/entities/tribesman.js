@@ -1,4 +1,5 @@
 import Entity from "./entity.js";
+import Task from "../task.js";
 
 export default class Tribesman extends Entity {
   constructor(id, x, y, tool = "none", armor = 0, health = 3) {
@@ -6,8 +7,28 @@ export default class Tribesman extends Entity {
     this.health = health;
     this.tool = tool;
     this.armor = armor;
-    this.tasks = [];
+    this.tasks = [new Task("idle", null)];
     this.cooldown = 0;
+  }
+
+  addTask(task) {
+    if (!this.tasks.some(t => t.targetId === task.targetId && t.type === task.type) {
+      this.tasks.push(task);
+    }
+  }
+
+  update(gameManager) {
+    if (this.cooldown > 0) {
+      this.cooldown -= gameManager.deltaTime;
+      if (this.cooldown < 0) {
+        this.cooldown = 0;
+        if (this.tasks[0].type === "idle") return;
+        gameManager.completeTask(this, this.tasks[0]);
+        this.tasks.shift(); // Remove completed task
+        this.tasks.sort((a, b) => b.priority - a.priority); // Sort tasks by priority
+        this.cooldown = this.tasks[0].cooldownTime;
+      }
+    }
   }
 
   toJSON() {

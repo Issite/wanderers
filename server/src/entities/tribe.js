@@ -1,8 +1,9 @@
 import Entity from "./entity.js";
 import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
+import Task from "../task.js";
 import { getNewId, getGameManager } from "../utils.js";
-const MAX_MOVE_SPEED = 150; // Maximum pixels per second the tribe can move
+import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../shared/constants.js";
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode) {
@@ -33,7 +34,7 @@ class Tribe extends Entity {
     this.desiredY = totemY;
   }
 
-  update() {
+  update(gameManager) {
     const now = Date.now();
     const deltaTime = (now - this.lastUpdateTime) / 1000; // Convert to seconds
     this.lastUpdateTime = now;
@@ -56,6 +57,28 @@ class Tribe extends Entity {
         const angle = Math.atan2(dy, dx);
         this.x += Math.cos(angle) * maxDistance;
         this.y += Math.sin(angle) * maxDistance;
+      }
+    }
+
+    gameManager.entities.forEach(entity => {
+      const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
+      if (distanceToEntity <= INTERACTION_DISTANCE) {
+        switch (typeof entity) {
+          case "Tree":
+            this.tribesmen.forEach(tribesman => {
+              if (tribesman.tool === "axe") {
+                const task = new Task("chop tree", entity.id);
+                tribesman.addTask(task);
+              }
+            });
+            break;
+          case "Rock":
+            break;
+          case "Mushroom":
+            break;
+          case "Grass":
+            break;
+        }
       }
     }
   }

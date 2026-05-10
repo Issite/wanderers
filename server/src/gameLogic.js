@@ -1,8 +1,8 @@
 import Tribe from "./entities/tribe.js";
 import Meadow from "./entities/meadow.js";
+import Post from "./entities/post.js";
 import { getNewId } from "./utils.js";
-const MAP_WIDTH = 8192;
-const MAP_HEIGHT = 8192;
+import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -17,6 +17,7 @@ export class GameManager {
 
   createWorld() {
     this.createMeadows();
+    this.createPosts();
   }
 
   createMeadows() {
@@ -44,6 +45,19 @@ export class GameManager {
       const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
       const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false, this);
       this.entities.set(tempMeadow.id, tempMeadow);
+    }
+  }
+
+  createPosts() {
+    const angleOffset = Math.random() * 2 * Math.PI;
+    const radius = MAP_HEIGHT / 4.5;
+    for (let i = 0; i < 3; i++) {
+      const angle = i * (2 * Math.PI / 3) + angleOffset; // 3 posts evenly spaced with random offset
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
+      const postId = getNewId(this);
+      const post = new Post(postId, x, y, i);
+      this.entities.set(post.id, post);
     }
   }
 
@@ -86,7 +100,7 @@ export class GameManager {
       const now = Date.now();
       this.entities.forEach(entity => {
         if (entity && typeof entity.update === 'function') {
-          entity.update();
+          entity.update(this);
         }
       });
       this.updateCount++;
