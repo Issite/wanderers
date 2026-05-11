@@ -1,11 +1,11 @@
-import { TASK_PRIORITIES } from "../../shared/constants.js";
+import { TASKS } from "../../shared/constants.js";
 
 class Task {
-    constructor(type, targetId, cooldownTime = 2) {
-        this.priority = TASK_PRIORITIES[type];
+    constructor(type, targetId) {
+        this.priority = TASKS[type].priority;
         this.type = type;
         this.targetId = targetId;
-        this.cooldownTime = cooldownTime;
+        this.cooldownTime = TASKS[type].cooldownTime;
     }
 
     toJSON() {

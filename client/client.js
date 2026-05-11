@@ -65,7 +65,7 @@ function setupCanvas() {
 
 function handleCanvasMouseDown(e) {
   if (tribeID === null) {
-    console.log('Not in game yet, ignoring mouse down');
+    // console.log('Not in game yet, ignoring mouse down');
     return;
   };
   
@@ -481,6 +481,34 @@ function drawEntity(entity) {
 
     ctx.fillStyle = ['#ff4444', '#44ff44', '#4444ff'][post.type % 3];
     ctx.fillRect(screenX - 35, screenY - 25, 70, 50);
+  } else if (entity.entityType === 'resource') {
+    const resource = entity;
+    const screenX = resource.x - cameraX;
+    const screenY = resource.y - cameraY;
+
+    // Only draw if resource is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    // For now. When art is added won't be nescessary
+    const resourceColors = {
+      food: '#ff2f2fff',
+      wood: '#6e4200ff',
+      gold: '#f9ca24',
+      water: '#45b7d1'
+    };
+
+    const color = resourceColors[resource.resourceType] || '#ccc';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 15, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 

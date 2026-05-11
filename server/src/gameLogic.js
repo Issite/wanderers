@@ -124,7 +124,6 @@ export class GameManager {
   }
 
   completeTask(tribesman, task) {
-    console.log(`Completing task: ${task.type} on target ${task.targetId}`);
     switch (task.type) {
       case "chop tree":
         const tree = this.entities.get(task.targetId);
@@ -133,16 +132,33 @@ export class GameManager {
           if (tree.health <= 0) {
             this.spawnResources(tree.x, tree.y, ["wood", "wood"]);
             this.entities.delete(tree.id);
+            return true;
           }
         }
+        return false;
         break;
+      case "pickup resource":
+        const resource = this.entities.get(task.targetId);
+        if (resource) {
+          this.entities.delete(resource.id);
+          return true;
+        }
+        return false;
+        break;
+      default:
+        return true; // Other tasks complete immediately
     }
   }
 
   spawnResources(x, y, resourceTypes) {
     resourceTypes.forEach(type => {
       const resourceId = getNewId(this);
-      const resource = new Resource(resourceId, x, y, type);
+      const offset = 40;
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = Math.random() * offset;
+      const resourceX = x + radius * Math.cos(angle);
+      const resourceY = y + radius * Math.sin(angle);
+      const resource = new Resource(resourceId, resourceX, resourceY, type);
       this.entities.set(resourceId, resource);
     });
   }

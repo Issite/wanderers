@@ -4,9 +4,9 @@ export const MEADOW_BASE_SIZE = 3;
 export const MEADOW_SIZE_FACTOR = 50;
 export const MAX_MOVE_SPEED = 150;
 export const INTERACTION_DISTANCE = 250;
-export const TASK_PRIORITIES = {
-    "fight": 0,
-    "chop tree": 1,
-    "pickup resource": 2,
-    "idle": 99
+export const TASKS = {
+    "fight": { priority: 0, cooldownTime: 2 },
+    "chop tree": { priority: 10, cooldownTime: 2 },
+    "pickup resource": { priority: 20, cooldownTime: 1 },
+    "idle": { priority: 99, cooldownTime: 0 }
 }

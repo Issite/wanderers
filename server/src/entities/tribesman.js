@@ -13,26 +13,23 @@ export default class Tribesman extends Entity {
 
   addTask(task) {
     if (!this.tasks.some(t => t.targetId === task.targetId && t.type === task.type)) {
-      console.log(`Adding task: ${task.type} on target ${task.targetId}`);
       this.tasks.push(task);
       this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
       if (this.cooldown === 0) {
         this.cooldown = this.tasks[0].cooldownTime;
       }
-      console.log(`Current task: ${this.tasks[0].type} (Cooldown: ${this.cooldown.toFixed(2)}s)`);
     }
   }
 
   update(gameManager) {
-    // console.log(`Updating tribesman ${this.id} at position (${this.x.toFixed(2)}, ${this.y.toFixed(2)}) with tool ${this.tool} and armor ${this.armor}. (Cooldown: ${this.cooldown.toFixed(2)}s, Tasks: ${this.tasks.map(t => t.type).join(", ")})`);
     if (this.cooldown > 0) { // working
       this.cooldown -= gameManager.deltaTime;
       if (this.cooldown <= 0) {
-        console.log(`Task completed: ${this.tasks[0].type} on target ${this.tasks[0].targetId}`);
         this.cooldown = 0;
-        gameManager.completeTask(this, this.tasks[0]);
-        this.tasks.shift(); // Remove completed task
-        this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
+        if (gameManager.completeTask(this, this.tasks[0])) { // i.e. I'm done this step. Am I done?
+          this.tasks.shift(); // Remove completed task
+          this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
+        }
         this.cooldown = this.tasks[0].cooldownTime;
       }
     }

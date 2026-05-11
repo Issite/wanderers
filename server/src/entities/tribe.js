@@ -81,6 +81,17 @@ class Tribe extends Entity {
             break;
           case "Grass":
             break;
+          case "Resource":
+            const targeted = this.tribesmen.some(t => t.tasks && t.tasks.some(task => task.targetId === entity.id));
+            if (!targeted) {
+              const availableTribesman = this.tribesmen.find(t => !t.tasks.some(task => task.type === "pickup resource"));
+              if (availableTribesman) {
+                console.log(`Tribesman ${availableTribesman.id} picking up resource ${entity.id}`);
+                const task = new Task("pickup resource", entity.id);
+                availableTribesman.addTask(task);
+              }
+            }
+            break;
         }
       }
     });
