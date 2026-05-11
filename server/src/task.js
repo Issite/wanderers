@@ -1,7 +1,7 @@
-import { TASK_PRIORITIES } from "../../shared/constants";
+import { TASK_PRIORITIES } from "../../shared/constants.js";
 
 class Task {
-    constructor(type, targetId, cooldownTime = 1000) {
+    constructor(type, targetId, cooldownTime = 2) {
         this.priority = TASK_PRIORITIES[type];
         this.type = type;
         this.targetId = targetId;

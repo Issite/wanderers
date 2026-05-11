@@ -3,7 +3,7 @@ import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
 import Task from "../task.js";
 import { getNewId, getGameManager } from "../utils.js";
-import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../shared/constants.js";
+import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../../shared/constants.js";
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode) {
@@ -16,6 +16,8 @@ class Tribe extends Entity {
       new Tribesman(getNewId(gameManager), 0, 0, "axe"),
       new Tribesman(getNewId(gameManager), 0, 0, "bow")
     ];
+    gameManager.entities.set(this.tribesmen[0].id, this.tribesmen[0]);
+    gameManager.entities.set(this.tribesmen[1].id, this.tribesmen[1]);
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
     this.lastUpdateTime = Date.now();
@@ -61,9 +63,10 @@ class Tribe extends Entity {
     }
 
     gameManager.entities.forEach(entity => {
+      if (!entity) return;
       const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
       if (distanceToEntity <= INTERACTION_DISTANCE) {
-        switch (typeof entity) {
+        switch (entity.constructor.name) {
           case "Tree":
             this.tribesmen.forEach(tribesman => {
               if (tribesman.tool === "axe") {
@@ -80,7 +83,7 @@ class Tribe extends Entity {
             break;
         }
       }
-    }
+    });
   }
 
   toJSON() {

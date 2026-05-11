@@ -1,6 +1,7 @@
 import Tribe from "./entities/tribe.js";
 import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
+import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
 import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
 
@@ -13,6 +14,8 @@ export class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+    this.lastUpdateTime = Date.now();
+    this.deltaTime = 0;
   }
 
   createWorld() {
@@ -98,6 +101,8 @@ export class GameManager {
     // Update world every 16ms (~60fps)
     this.updateInterval = setInterval(() => {
       const now = Date.now();
+      this.deltaTime = (now - this.lastUpdateTime) / 1000; // Convert to seconds
+      this.lastUpdateTime = now;
       this.entities.forEach(entity => {
         if (entity && typeof entity.update === 'function') {
           entity.update(this);
@@ -116,6 +121,30 @@ export class GameManager {
         this.onStateChange();
       }
     }, 16);
+  }
+
+  completeTask(tribesman, task) {
+    console.log(`Completing task: ${task.type} on target ${task.targetId}`);
+    switch (task.type) {
+      case "chop tree":
+        const tree = this.entities.get(task.targetId);
+        if (tree) {
+          tree.health -= 1;
+          if (tree.health <= 0) {
+            this.spawnResources(tree.x, tree.y, ["wood", "wood"]);
+            this.entities.delete(tree.id);
+          }
+        }
+        break;
+    }
+  }
+
+  spawnResources(x, y, resourceTypes) {
+    resourceTypes.forEach(type => {
+      const resourceId = getNewId(this);
+      const resource = new Resource(resourceId, x, y, type);
+      this.entities.set(resourceId, resource);
+    });
   }
 
   stopUpdateLoop() {
