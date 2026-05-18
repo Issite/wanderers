@@ -14,7 +14,7 @@ class Tribe extends Entity {
     const gameManager = getGameManager();
     this.tribesmen = [
       new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, id, "bow")
+      new Tribesman(getNewId(gameManager), 0, 0, id, "hammer")
     ];
     gameManager.entities.set(this.tribesmen[0].id, this.tribesmen[0]);
     gameManager.entities.set(this.tribesmen[1].id, this.tribesmen[1]);
@@ -76,6 +76,12 @@ class Tribe extends Entity {
             });
             break;
           case "Rock":
+            this.tribesmen.forEach(tribesman => {
+              if (tribesman.tool === "hammer") {
+                const task = new Task("break rock", entity.id);
+                tribesman.addTask(task);  
+              }
+            });
             break;
           case "Mushroom":
             break;

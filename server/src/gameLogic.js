@@ -146,6 +146,18 @@ export class GameManager {
         }
         return false;
         break;
+      case "break rock":
+        const rock = this.entities.get(task.targetId);
+        if (rock) {
+          rock.health -= 1;
+          if (rock.health <= 0) {
+            this.spawnResources(rock.x, rock.y, Array(rock.size * 2).fill("gold"));
+            this.entities.delete(rock.id);
+            return true;
+          }
+        }
+        return false;
+        break;
       default:
         return true; // Other tasks complete immediately
     }

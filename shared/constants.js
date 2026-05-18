@@ -7,6 +7,7 @@ export const INTERACTION_DISTANCE = 250;
 export const TASKS = {
     "fight": { priority: 0, cooldownTime: 2 },
     "chop tree": { priority: 10, cooldownTime: 2 },
+    "break rock": { priority: 10, cooldownTime: 2 },
     "pickup resource": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
 }
