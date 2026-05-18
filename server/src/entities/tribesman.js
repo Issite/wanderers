@@ -2,8 +2,9 @@ import Entity from "./entity.js";
 import Task from "../task.js";
 
 export default class Tribesman extends Entity {
-  constructor(id, x, y, tool = "none", armor = 0, health = 3) {
+  constructor(id, x, y, tribeId, tool = "none", armor = 0, health = 3) {
     super(id, x, y);
+    this.tribeId = tribeId;
     this.health = health;
     this.tool = tool;
     this.armor = armor;

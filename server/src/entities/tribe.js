@@ -13,8 +13,8 @@ class Tribe extends Entity {
     this.teamCode = teamCode;
     const gameManager = getGameManager();
     this.tribesmen = [
-      new Tribesman(getNewId(gameManager), 0, 0, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, "bow")
+      new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
+      new Tribesman(getNewId(gameManager), 0, 0, id, "bow")
     ];
     gameManager.entities.set(this.tribesmen[0].id, this.tribesmen[0]);
     gameManager.entities.set(this.tribesmen[1].id, this.tribesmen[1]);
@@ -82,19 +82,21 @@ class Tribe extends Entity {
           case "Grass":
             break;
           case "Resource":
-            const targeted = this.tribesmen.some(t => t.tasks && t.tasks.some(task => task.targetId === entity.id));
-            if (!targeted) {
-              const availableTribesman = this.tribesmen.find(t => !t.tasks.some(task => task.type === "pickup resource"));
-              if (availableTribesman) {
-                console.log(`Tribesman ${availableTribesman.id} picking up resource ${entity.id}`);
-                const task = new Task("pickup resource", entity.id);
-                availableTribesman.addTask(task);
-              }
+            const task = new Task("pickup resource", entity.id);
+            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+            if (idleTribesman) {
+              idleTribesman.addTask(task);
             }
             break;
         }
       }
     });
+  }
+
+  addResource(type) {
+    if (this.resources[type] !== undefined) {
+      this.resources[type]++;
+    }
   }
 
   toJSON() {

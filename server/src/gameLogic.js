@@ -140,6 +140,7 @@ export class GameManager {
       case "pickup resource":
         const resource = this.entities.get(task.targetId);
         if (resource) {
+          this.entities.get(tribesman.tribeId).addResource(resource.type);
           this.entities.delete(resource.id);
           return true;
         }
