@@ -158,6 +158,17 @@ export class GameManager {
         }
         return false;
         break;
+      case "cut grass":
+        const grass = this.entities.get(task.targetId);
+        if (grass) {
+          let type;
+          if ((type = ["none", "wood", "food", "gold"][Math.floor(Math.random() * 4)]) !== "none") {
+            this.spawnResources(grass.x, grass.y, [type]);
+            this.entities.delete(grass.id);
+          }
+        }
+        return true; // Grass cuts immediately and doesn't need to be removed from the map
+        break;
       default:
         return true; // Other tasks complete immediately
     }
