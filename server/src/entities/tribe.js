@@ -14,7 +14,7 @@ class Tribe extends Entity {
     const gameManager = getGameManager();
     this.tribesmen = [
       new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
+      new Tribesman(getNewId(gameManager), 0, 0, id, "bow")
     ];
     gameManager.entities.set(this.tribesmen[0].id, this.tribesmen[0]);
     gameManager.entities.set(this.tribesmen[1].id, this.tribesmen[1]);
@@ -29,6 +29,7 @@ class Tribe extends Entity {
       gold: 0,
       water: 0
     };
+    this.targets = []; // Currently only mushrooms.
   }
 
   updateDesiredPosition(totemX, totemY) {
@@ -62,6 +63,21 @@ class Tribe extends Entity {
       }
     }
 
+    this.targets.forEach(targetId => {
+      const target = gameManager.entities.get(targetId);
+      if (target) {
+        switch (target.constructor.name) {
+          case "Mushroom": // Basically pickup resource
+            const task = new Task("pick mushroom", targetId);
+            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+            if (idleTribesman) {
+              idleTribesman.addTask(task);
+            }
+            break;
+        }
+      }
+    });
+
     gameManager.entities.forEach(entity => {
       if (!entity) return;
       const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
@@ -83,8 +99,6 @@ class Tribe extends Entity {
               }
             });
             break;
-          case "Mushroom":
-            break;
           case "Grass":
               this.tribesmen.forEach(tribesman => {
                 if (tribesman.tool === "scythe") {
@@ -103,6 +117,15 @@ class Tribe extends Entity {
         }
       }
     });
+  }
+
+  tryTargetMushroom(mushroomId) {
+    const mushroom = getGameManager().entities.get(mushroomId);
+    if (mushroom && mushroom.constructor.name === "Mushroom" && !this.targets.includes(mushroomId) && Math.hypot(this.x - mushroom.x, this.y - mushroom.y) <= INTERACTION_DISTANCE) {
+      this.targets.push(mushroomId);
+      return true;
+    }
+    return false;
   }
 
   addResource(type) {

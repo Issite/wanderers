@@ -9,6 +9,7 @@ export const TASKS = {
     "chop tree": { priority: 10, cooldownTime: 2 },
     "break rock": { priority: 10, cooldownTime: 2 },
     "cut grass": { priority: 10, cooldownTime: 2 },
+    "pick mushroom": { priority: 15, cooldownTime: 1 },
     "pickup resource": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
 }

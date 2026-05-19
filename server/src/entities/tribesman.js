@@ -12,6 +12,14 @@ export default class Tribesman extends Entity {
     this.cooldown = 0;
   }
 
+  damage(amount) {
+    this.health -= amount;
+    if (this.health <= 0) {
+      this.health = 0;
+      // Handle death (e.g., remove from game, drop resources, etc.)
+    }
+  }
+
   addTask(task) {
     if (!this.tasks.some(t => t.targetId === task.targetId && t.type === task.type)) {
       this.tasks.push(task);

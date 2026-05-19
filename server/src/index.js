@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GameManager } from './gameLogic.js';
 import { setGameManager } from './utils.js';
+import { type } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,6 +70,21 @@ wss.on('connection', (ws) => {
           tribe.totem.y = data.totem.y;
           tribe.updateDesiredPosition(data.totem.x, data.totem.y);
           // Don't broadcast on every totem update - let the regular update loop handle it
+        }
+      } else if (data.type === 'targetMushroom') {
+        const tribeId = clients.get(ws);
+        if (this.gameManager.tryTargetMushroom(tribeId, data.mushroomId)) {
+          ws.send(JSON.stringify({
+            type: 'mushroomTargeted',
+            mushroomId: data.mushroomId,
+            success: true
+          }));
+        } else {
+          ws.send(JSON.stringify({
+            type: 'mushroomTargeted',
+            mushroomId: data.mushroomId,
+            success: false
+          }));
         }
       }
     } catch (error) {

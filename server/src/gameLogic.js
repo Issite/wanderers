@@ -3,7 +3,7 @@ import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
 import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
+import { MAP_WIDTH, MAP_HEIGHT, INTERACTION_DISTANCE } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -169,9 +169,24 @@ export class GameManager {
         }
         return true; // Grass cuts immediately and doesn't need to be removed from the map
         break;
+      case "pick mushroom":
+        const mushroom = this.entities.get(task.targetId);
+        if (mushroom) {
+          if (mushroom.type < 4) {
+            this.entities.get(tribesman.tribeId).addResource("food");
+          } else {
+            tribesman.damage(1);
+          }
+        }
+        return true;
+        break;
       default:
         return true; // Other tasks complete immediately
     }
+  }
+
+  tryTargetMushroom(tribeId, mushroomId) {
+    return this.entities.get(tribeId).tryTargetMushroom(mushroomId);
   }
 
   spawnResources(x, y, resourceTypes) {
