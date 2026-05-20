@@ -88,6 +88,18 @@ function handleCanvasMouseDown(e) {
     dragOffset.y = worldY - totem.y;
     canvas.style.cursor = 'grabbing';
   }
+
+  gameState.entities.forEach(entity => {
+    if (entity.entityType === 'mushroom') {
+      const mushroomScreenX = entity.x - cameraX;
+      const mushroomScreenY = entity.y - cameraY;
+      const mushroomDistance = Math.hypot(mouseX - mushroomScreenX, mouseY - mushroomScreenY);
+
+      if (mushroomDistance < 10) {
+        targetMushroom(entity.id);
+      }
+    }
+  });
 }
 
 function handleCanvasMouseMove(e) {
@@ -135,11 +147,11 @@ function sendTotemUpdate() {
   }
 }
 
-function targetMushroom(mushroomID) {
+function targetMushroom(mushroomId) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({
       type: 'targetMushroom',
-      mushroomID: mushroomID
+      mushroomId: mushroomId
     }));
   }
 }

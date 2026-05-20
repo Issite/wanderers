@@ -177,6 +177,7 @@ export class GameManager {
           } else {
             tribesman.damage(1);
           }
+          this.entities.delete(mushroom.id);
         }
         return true;
         break;

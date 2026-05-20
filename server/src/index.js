@@ -73,7 +73,7 @@ wss.on('connection', (ws) => {
         }
       } else if (data.type === 'targetMushroom') {
         const tribeId = clients.get(ws);
-        if (this.gameManager.tryTargetMushroom(tribeId, data.mushroomId)) {
+        if (gameManager.tryTargetMushroom(tribeId, data.mushroomId)) {
           ws.send(JSON.stringify({
             type: 'mushroomTargeted',
             mushroomId: data.mushroomId,
