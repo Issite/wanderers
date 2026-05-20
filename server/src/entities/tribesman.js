@@ -8,7 +8,7 @@ export default class Tribesman extends Entity {
     this.health = health;
     this.tool = tool;
     this.armor = armor;
-    this.tasks = [new Task("idle", null, 0)];
+    this.tasks = [new Task("idle", null)];
     this.cooldown = 0;
   }
 

@@ -12,4 +12,4 @@ export const TASKS = {
     "pick mushroom": { priority: 15, cooldownTime: 1 },
     "pickup resource": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
-}
+};

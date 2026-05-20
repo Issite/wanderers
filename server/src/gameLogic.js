@@ -3,7 +3,7 @@ import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
 import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT, INTERACTION_DISTANCE } from "../../shared/constants.js";
+import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -133,18 +133,19 @@ export class GameManager {
             this.spawnResources(tree.x, tree.y, ["wood", "wood"]);
             this.entities.delete(tree.id);
             return true;
+          } else {
+            return false;
           }
         }
-        return false;
+        return true;
         break;
       case "pickup resource":
         const resource = this.entities.get(task.targetId);
         if (resource) {
           this.entities.get(tribesman.tribeId).addResource(resource.type);
           this.entities.delete(resource.id);
-          return true;
         }
-        return false;
+        return true;
         break;
       case "break rock":
         const rock = this.entities.get(task.targetId);
@@ -154,9 +155,11 @@ export class GameManager {
             this.spawnResources(rock.x, rock.y, Array(rock.size * 2).fill("gold"));
             this.entities.delete(rock.id);
             return true;
+          } else {
+            return false;
           }
         }
-        return false;
+        return true;
         break;
       case "cut grass":
         const grass = this.entities.get(task.targetId);
@@ -167,7 +170,7 @@ export class GameManager {
             this.entities.delete(grass.id);
           }
         }
-        return true; // Grass cuts immediately and doesn't need to be removed from the map
+        return true;
         break;
       case "pick mushroom":
         const mushroom = this.entities.get(task.targetId);

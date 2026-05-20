@@ -14,10 +14,11 @@ class Tribe extends Entity {
     const gameManager = getGameManager();
     this.tribesmen = [
       new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, id, "bow")
+      new Tribesman(getNewId(gameManager), 0, 0, id, "bow"),
+      // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
+      // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
     ];
-    gameManager.entities.set(this.tribesmen[0].id, this.tribesmen[0]);
-    gameManager.entities.set(this.tribesmen[1].id, this.tribesmen[1]);
+    this.tribesmen.forEach(tribesman => gameManager.entities.set(tribesman.id, tribesman));
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
     this.lastUpdateTime = Date.now();
@@ -72,6 +73,8 @@ class Tribe extends Entity {
             const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
             if (idleTribesman) {
               idleTribesman.addTask(task);
+              // Note: Due to multiple tribesmen working multiple tasks, it's possible that this will cause an issue, such as the tribesman assigned never completing the task
+              this.targets = this.targets.filter(id => id !== targetId); // Remove from targets once assigned
             }
             break;
         }

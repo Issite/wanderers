@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { GameManager } from './gameLogic.js';
 import { setGameManager } from './utils.js';
-import { type } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -94,6 +93,11 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
+    gameManager.entities.forEach(entity => {
+      if (entity && entity.entityType === 'tribesman' && entity.tribeId === clients.get(ws)) {
+        gameManager.entities.delete(entity.id); // Remove tribesmen associated with this client
+      }
+    });
     gameManager.entities.delete(clients.get(ws)); // Remove tribe associated with this client
     clients.delete(ws);
   });
