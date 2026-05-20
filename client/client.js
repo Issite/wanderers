@@ -130,6 +130,15 @@ function sendTotemUpdate() {
   }
 }
 
+function targetMushroom(mushroomID) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: 'targetMushroom',
+      mushroomID: mushroomID
+    }));
+  }
+}
+
 function connectWebSocket() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   ws = new WebSocket(`${protocol}//${window.location.host}`);
