@@ -13,6 +13,7 @@ let ws = null;
 let canvas = null;
 let ctx = null;
 let gameState = { tribes: [], updatesPerSecond: 0 };
+let mouseMoveData = null;  
 
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
@@ -90,7 +91,11 @@ function handleCanvasMouseDown(e) {
 }
 
 function handleCanvasMouseMove(e) {
-  if (!isDragging || tribeID === null) return;
+    mouseMoveData = e;
+}
+
+function updateTotemPos(e) {
+  if (!isDragging || tribeID === null || !e) return ;
   
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
@@ -228,6 +233,8 @@ function render() {
 
   cameraX = localTribe.x - canvas.width / 2;
   cameraY = localTribe.y - canvas.height / 2;
+
+  updateTotemPos(mouseMoveData);
 
   // Clear canvas
   ctx.fillStyle = '#222';
