@@ -25,8 +25,6 @@ let dragOffset = { x: 0, y: 0 };
 // Camera position (follows player's tribe actual position)
 let cameraX = 0;
 let cameraY = 0;
-let targetCameraX = 0;
-let targetCameraY = 0;
 
 // FPS tracking
 let frameCount = 0;
@@ -68,7 +66,7 @@ function setupCanvas() {
 
 function handleCanvasMouseDown(e) {
   if (tribeID === null) {
-    console.log('Not in game yet, ignoring mouse down');
+    // console.log('Not in game yet, ignoring mouse down');
     return;
   };
   
@@ -89,6 +87,20 @@ function handleCanvasMouseDown(e) {
     dragOffset.x = worldX - totem.x;
     dragOffset.y = worldY - totem.y;
     canvas.style.cursor = 'grabbing';
+  }
+
+  if (gameState.entities) {
+    gameState.entities.forEach(entity => {
+      if (entity.entityType === 'mushroom') {
+        const mushroomScreenX = entity.x - cameraX;
+        const mushroomScreenY = entity.y - cameraY;
+        const mushroomDistance = Math.hypot(mouseX - mushroomScreenX, mouseY - mushroomScreenY);
+
+        if (mushroomDistance < 10) {
+          targetMushroom(entity.id);
+        }
+      }
+    });
   }
 }
 
@@ -137,6 +149,15 @@ function sendTotemUpdate() {
   }
 }
 
+function targetMushroom(mushroomId) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({
+      type: 'targetMushroom',
+      mushroomId: mushroomId
+    }));
+  }
+}
+
 function connectWebSocket() {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   ws = new WebSocket(`${protocol}//${window.location.host}`);
@@ -159,8 +180,6 @@ function connectWebSocket() {
       console.log(`Joined game with tribe ID: ${tribeID}, name: ${localTribe.name}`);
       cameraX = localTribe.x - canvas.width / 2;
       cameraY = localTribe.y - canvas.height / 2;
-      targetCameraX = cameraX;
-      targetCameraY = cameraY;
       showGameScreen();
     } else if (data.type === 'registered') {
       console.log('Registered with tribe ID:', data.tribeId);
@@ -474,6 +493,51 @@ function drawEntity(entity) {
     ctx.fillStyle = 'hsla(329, 100%, 40%, 1.00)';
     ctx.beginPath();
     ctx.arc(screenX, screenY - 45, 50, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (entity.entityType === 'post') {
+    const post = entity;
+    const screenX = post.x - cameraX;
+    const screenY = post.y - cameraY;
+
+    // Only draw if post is on screen
+    if (
+      screenX + 30 < 0 ||
+      screenX - 30 > canvas.width ||
+      screenY + 30 < 0 ||
+      screenY - 30 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = ['#ff4444', '#44ff44', '#4444ff'][post.type % 3];
+    ctx.fillRect(screenX - 35, screenY - 25, 70, 50);
+  } else if (entity.entityType === 'resource') {
+    const resource = entity;
+    const screenX = resource.x - cameraX;
+    const screenY = resource.y - cameraY;
+
+    // Only draw if resource is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    // For now. When art is added won't be nescessary
+    const resourceColors = {
+      food: '#ff2f2fff',
+      wood: '#6e4200ff',
+      gold: '#f9ca24',
+      water: '#45b7d1'
+    };
+
+    const color = resourceColors[resource.resourceType] || '#ccc';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 15, 0, Math.PI * 2);
     ctx.fill();
   }
 }

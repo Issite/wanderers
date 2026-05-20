@@ -1,8 +1,9 @@
 import Entity from "./entity.js";
 import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
+import Task from "../task.js";
 import { getNewId, getGameManager } from "../utils.js";
-const MAX_MOVE_SPEED = 150; // Maximum pixels per second the tribe can move
+import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../../shared/constants.js";
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode) {
@@ -12,9 +13,12 @@ class Tribe extends Entity {
     this.teamCode = teamCode;
     const gameManager = getGameManager();
     this.tribesmen = [
-      new Tribesman(getNewId(gameManager), 0, 0, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, "bow")
+      new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
+      new Tribesman(getNewId(gameManager), 0, 0, id, "bow"),
+      // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
+      // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
     ];
+    this.tribesmen.forEach(tribesman => gameManager.entities.set(tribesman.id, tribesman));
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
     this.lastUpdateTime = Date.now();
@@ -26,6 +30,7 @@ class Tribe extends Entity {
       gold: 0,
       water: 0
     };
+    this.targets = []; // Currently only mushrooms.
   }
 
   updateDesiredPosition(totemX, totemY) {
@@ -33,7 +38,7 @@ class Tribe extends Entity {
     this.desiredY = totemY;
   }
 
-  update() {
+  update(gameManager) {
     const now = Date.now();
     const deltaTime = (now - this.lastUpdateTime) / 1000; // Convert to seconds
     this.lastUpdateTime = now;
@@ -57,6 +62,78 @@ class Tribe extends Entity {
         this.x += Math.cos(angle) * maxDistance;
         this.y += Math.sin(angle) * maxDistance;
       }
+    }
+
+    this.targets.forEach(targetId => {
+      const target = gameManager.entities.get(targetId);
+      if (target) {
+        switch (target.constructor.name) {
+          case "Mushroom": // Basically pickup resource
+            const task = new Task("pick mushroom", targetId);
+            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+            if (idleTribesman) {
+              idleTribesman.addTask(task);
+              // Note: Due to multiple tribesmen working multiple tasks, it's possible that this will cause an issue, such as the tribesman assigned never completing the task
+              this.targets = this.targets.filter(id => id !== targetId); // Remove from targets once assigned
+            }
+            break;
+        }
+      }
+    });
+
+    gameManager.entities.forEach(entity => {
+      if (!entity) return;
+      const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
+      if (distanceToEntity <= INTERACTION_DISTANCE) {
+        switch (entity.constructor.name) {
+          case "Tree":
+            this.tribesmen.forEach(tribesman => {
+              if (tribesman.tool === "axe") {
+                const task = new Task("chop tree", entity.id);
+                tribesman.addTask(task);
+              }
+            });
+            break;
+          case "Rock":
+            this.tribesmen.forEach(tribesman => {
+              if (tribesman.tool === "hammer") {
+                const task = new Task("break rock", entity.id);
+                tribesman.addTask(task);  
+              }
+            });
+            break;
+          case "Grass":
+              this.tribesmen.forEach(tribesman => {
+                if (tribesman.tool === "scythe") {
+                  const task = new Task("cut grass", entity.id);
+                  tribesman.addTask(task);
+                }
+              });
+            break;
+          case "Resource":
+            const task = new Task("pickup resource", entity.id);
+            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+            if (idleTribesman) {
+              idleTribesman.addTask(task);
+            }
+            break;
+        }
+      }
+    });
+  }
+
+  tryTargetMushroom(mushroomId) {
+    const mushroom = getGameManager().entities.get(mushroomId);
+    if (mushroom && mushroom.constructor.name === "Mushroom" && !this.targets.includes(mushroomId) && Math.hypot(this.x - mushroom.x, this.y - mushroom.y) <= INTERACTION_DISTANCE) {
+      this.targets.push(mushroomId);
+      return true;
+    }
+    return false;
+  }
+
+  addResource(type) {
+    if (this.resources[type] !== undefined) {
+      this.resources[type]++;
     }
   }
 

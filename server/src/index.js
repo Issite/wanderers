@@ -70,6 +70,21 @@ wss.on('connection', (ws) => {
           tribe.updateDesiredPosition(data.totem.x, data.totem.y);
           // Don't broadcast on every totem update - let the regular update loop handle it
         }
+      } else if (data.type === 'targetMushroom') {
+        const tribeId = clients.get(ws);
+        if (gameManager.tryTargetMushroom(tribeId, data.mushroomId)) {
+          ws.send(JSON.stringify({
+            type: 'mushroomTargeted',
+            mushroomId: data.mushroomId,
+            success: true
+          }));
+        } else {
+          ws.send(JSON.stringify({
+            type: 'mushroomTargeted',
+            mushroomId: data.mushroomId,
+            success: false
+          }));
+        }
       }
     } catch (error) {
       console.error('Error handling message:', error);
@@ -78,6 +93,11 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     console.log('Client disconnected');
+    gameManager.entities.forEach(entity => {
+      if (entity && entity.entityType === 'tribesman' && entity.tribeId === clients.get(ws)) {
+        gameManager.entities.delete(entity.id); // Remove tribesmen associated with this client
+      }
+    });
     gameManager.entities.delete(clients.get(ws)); // Remove tribe associated with this client
     clients.delete(ws);
   });

@@ -1,8 +1,9 @@
 import Tribe from "./entities/tribe.js";
 import Meadow from "./entities/meadow.js";
+import Post from "./entities/post.js";
+import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
-const MAP_WIDTH = 8192;
-const MAP_HEIGHT = 8192;
+import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -13,10 +14,13 @@ export class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+    this.lastUpdateTime = Date.now();
+    this.deltaTime = 0;
   }
 
   createWorld() {
     this.createMeadows();
+    this.createPosts();
   }
 
   createMeadows() {
@@ -44,6 +48,19 @@ export class GameManager {
       const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
       const tempMeadow = new Meadow(tempId, x, y, 0, 20, Date.now(), false, this);
       this.entities.set(tempMeadow.id, tempMeadow);
+    }
+  }
+
+  createPosts() {
+    const angleOffset = Math.random() * 2 * Math.PI;
+    const radius = MAP_HEIGHT / 4.5;
+    for (let i = 0; i < 3; i++) {
+      const angle = i * (2 * Math.PI / 3) + angleOffset; // 3 posts evenly spaced with random offset
+      const x = (MAP_WIDTH / 2) + radius * Math.cos(angle);
+      const y = (MAP_HEIGHT / 2) + radius * Math.sin(angle);
+      const postId = getNewId(this);
+      const post = new Post(postId, x, y, i);
+      this.entities.set(post.id, post);
     }
   }
 
@@ -84,9 +101,11 @@ export class GameManager {
     // Update world every 16ms (~60fps)
     this.updateInterval = setInterval(() => {
       const now = Date.now();
+      this.deltaTime = (now - this.lastUpdateTime) / 1000; // Convert to seconds
+      this.lastUpdateTime = now;
       this.entities.forEach(entity => {
         if (entity && typeof entity.update === 'function') {
-          entity.update();
+          entity.update(this);
         }
       });
       this.updateCount++;
@@ -102,6 +121,89 @@ export class GameManager {
         this.onStateChange();
       }
     }, 16);
+  }
+
+  completeTask(tribesman, task) {
+    switch (task.type) {
+      case "chop tree":
+        const tree = this.entities.get(task.targetId);
+        if (tree) {
+          tree.health -= 1;
+          if (tree.health <= 0) {
+            this.spawnResources(tree.x, tree.y, ["wood", "wood"]);
+            this.entities.delete(tree.id);
+            return true;
+          } else {
+            return false;
+          }
+        }
+        return true;
+        break;
+      case "pickup resource":
+        const resource = this.entities.get(task.targetId);
+        if (resource) {
+          this.entities.get(tribesman.tribeId).addResource(resource.type);
+          this.entities.delete(resource.id);
+        }
+        return true;
+        break;
+      case "break rock":
+        const rock = this.entities.get(task.targetId);
+        if (rock) {
+          rock.health -= 1;
+          if (rock.health <= 0) {
+            this.spawnResources(rock.x, rock.y, Array(rock.size * 2).fill("gold"));
+            this.entities.delete(rock.id);
+            return true;
+          } else {
+            return false;
+          }
+        }
+        return true;
+        break;
+      case "cut grass":
+        const grass = this.entities.get(task.targetId);
+        if (grass) {
+          let type;
+          if ((type = ["none", "wood", "food", "gold"][Math.floor(Math.random() * 4)]) !== "none") {
+            this.spawnResources(grass.x, grass.y, [type]);
+            this.entities.delete(grass.id);
+          }
+        }
+        return true;
+        break;
+      case "pick mushroom":
+        const mushroom = this.entities.get(task.targetId);
+        if (mushroom) {
+          if (mushroom.type < 4) {
+            this.entities.get(tribesman.tribeId).addResource("food");
+          } else {
+            tribesman.damage(1);
+          }
+          this.entities.delete(mushroom.id);
+        }
+        return true;
+        break;
+      default:
+        return true; // Other tasks complete immediately
+    }
+  }
+
+  tryTargetMushroom(tribeId, mushroomId) {
+    return this.entities.get(tribeId).tryTargetMushroom(mushroomId);
+  }
+
+  spawnResources(x, y, resourceTypes) {
+    resourceTypes.forEach(type => {
+      const resourceId = getNewId(this);
+      const offset = 40;
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = Math.random() * offset;
+      const resourceX = x + radius * Math.cos(angle);
+      const resourceY = y + radius * Math.sin(angle);
+      const resource = new Resource(resourceId, resourceX, resourceY, type);
+      this.entities.set(resourceId, resource);
+    });
   }
 
   stopUpdateLoop() {
