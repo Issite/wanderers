@@ -9,6 +9,7 @@ export class GameManager {
   constructor() {
     this.entities = new Map();
     this.teamCodes = new Map();
+    this.teamCounts = [0, 0, 0, 0, 0, 0, 0]; // Initialize team counts
     this.updateInterval = null;
     this.onStateChange = null;
     this.updatesPerSecond = 0;
@@ -21,6 +22,7 @@ export class GameManager {
   createWorld() {
     this.createMeadows();
     this.createPosts();
+    this.spawnBarbarians();
   }
 
   createMeadows() {
@@ -82,6 +84,7 @@ export class GameManager {
     const y = Math.random() * MAP_HEIGHT;
     const tribe = new Tribe(id, x, y, name, teamId, teamCode);
     this.entities.set(tribe.id, tribe);
+    this.teamCounts[teamId]++; // Increment team count
     return tribe;
   }
 
