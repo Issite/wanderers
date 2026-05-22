@@ -266,6 +266,9 @@ function render() {
   // Draw resources
   drawResources();
 
+  // Draw minimap
+  drawMinimap();
+
   // Draw debug info
   drawDebugInfo();
 
@@ -279,6 +282,45 @@ function render() {
   }
 
   requestAnimationFrame(render);
+}
+
+function drawMinimap() {
+  const minimapWidth = 200;
+  const minimapHeight = 200;
+  const margin = 20;
+  const minimapX = canvas.width - minimapWidth - margin;
+  const minimapY = canvas.height - minimapHeight - margin;
+  const scaleX = minimapWidth / MAP_WIDTH;
+  const scaleY = minimapHeight / MAP_HEIGHT;
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.fillRect(minimapX, minimapY, minimapWidth, minimapHeight);
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(minimapX, minimapY, minimapWidth, minimapHeight);
+
+  gameState.entities.forEach(entity => {
+    if (entity.entityType === 'meadow') {
+      const meadowX = minimapX + entity.x * scaleX;
+      const meadowY = minimapY + entity.y * scaleY;
+      const meadowRadius = Math.max(2, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * scaleX);
+      ctx.fillStyle = '#0b5f21';
+      ctx.beginPath();
+      ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  gameState.entities.forEach(entity => {
+    if (entity.entityType === 'tribe') {
+      const tribeX = minimapX + entity.x * scaleX;
+      const tribeY = minimapY + entity.y * scaleY;
+      const tribeSize = Math.max(3, Math.sqrt(entity.tribesmen.length) * 2);
+      const isSameTeam = entity.teamId === localTribe.teamId;
+      ctx.fillStyle = isSameTeam ? '#00ff66' : '#ff2f2f';
+      ctx.fillRect(tribeX - tribeSize / 2, tribeY - tribeSize / 2, tribeSize, tribeSize);
+    }
+  });
 }
 
 function drawDebugInfo() {
