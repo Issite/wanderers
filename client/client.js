@@ -322,7 +322,8 @@ function drawMinimap() {
     } else if (entity.entityType === 'tribe') {
       const tribeX = minimapX + entity.x * scaleX;
       const tribeY = minimapY + entity.y * scaleY;
-      const tribeSize = Math.max(MIN_MINIMAP_TRIBE_SIZE, Math.sqrt(entity.tribesmen.length) * MINIMAP_TRIBE_SIZE_MULTIPLIER);
+      const tribesmenCount = Array.isArray(entity.tribesmen) ? entity.tribesmen.length : 0;
+      const tribeSize = Math.max(MIN_MINIMAP_TRIBE_SIZE, Math.sqrt(tribesmenCount) * MINIMAP_TRIBE_SIZE_MULTIPLIER);
       const isSameTeam = entity.teamId === localTribe.teamId;
       ctx.fillStyle = isSameTeam ? '#00ff66' : '#ff2f2f';
       ctx.fillRect(tribeX - tribeSize / 2, tribeY - tribeSize / 2, tribeSize, tribeSize);
