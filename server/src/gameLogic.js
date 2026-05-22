@@ -66,6 +66,34 @@ export class GameManager {
     }
   }
 
+  spawnBarbarians() {
+    while (this.teamCounts[0] < 8) { // attempt 8 barbarian tribes on meadows
+      const targetMeadow = Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Meadow")[Math.floor(Math.random() * 16)];
+      if (targetMeadow && !targetMeadow.proximityCheck(this)) { // Only spawn if no tribes are nearby
+        const tempId = getNewId(this);
+        const barbarianTribe = new Tribe(tempId, targetMeadow.x, targetMeadow.y, `Barbarian${tempId}`, 0, null, "guard");
+        this.entities.set(barbarianTribe.id, barbarianTribe);
+        barbarianTribe.generateBarbarians(targetMeadow.size + 1 + Math.floor(Math.random() * 2)); // Spawn barbarians based on meadow size with some randomness
+        this.teamCounts[0]++;
+      }
+    }
+
+    for (let i = 0; i < 20-this.teamCounts[0]; i++) { // attempt 20 total barbarian tribes
+      const x = Math.random() * MAP_WIDTH;
+      const y = Math.random() * MAP_HEIGHT;
+      if (Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Tribe").every(tribe => {
+        const dx = tribe.x - x;
+        const dy = tribe.y - y;
+        return Math.hypot(dx, dy) > 200; // Only spawn if no tribes are within 200 units
+      })) {
+        const tempId = getNewId(this);
+        const barbarianTribe = new Tribe(tempId, x, y, `Barbarian${tempId}`, 0, null, "guard");
+        this.entities.set(barbarianTribe.id, barbarianTribe);
+        barbarianTribe.generateBarbarians(0); // Spawn small tribes in random locations to encourage exploration
+      }
+    }
+  }
+
   joinGame(playerName, teamCode) {
     const id = getNewId(this);
     const name = playerName && playerName.trim() ? playerName : `Tribe${id}`;

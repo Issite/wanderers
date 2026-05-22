@@ -3,7 +3,8 @@ import {
   MAP_WIDTH,
   MAX_MOVE_SPEED,
   MEADOW_BASE_SIZE,
-  MEADOW_SIZE_FACTOR
+  MEADOW_SIZE_FACTOR,
+  TEAM_COLORS
 } from "../shared/constants.js";
 
 let tribeID = null;
@@ -350,12 +351,12 @@ function drawEntity(entity) {
 
     // Draw totem (circle)
     if (tribe.id === tribeID) {
-      ctx.fillStyle = '#888';
+      ctx.fillStyle = TEAM_COLORS[tribe.teamId] || '#666';
       ctx.beginPath();
       ctx.arc(localTribe.totem.x - cameraX, localTribe.totem.y - cameraY, TOTEM_SIZE, 0, Math.PI * 2);
       ctx.fill();
-    } else {
-      ctx.fillStyle = '#666';
+    } else if (!(tribe.teamId === 0)) { // Don't draw barbarian totems
+      ctx.fillStyle = TEAM_COLORS[tribe.teamId] || '#666';
       ctx.beginPath();
       ctx.arc(screenX, screenY, TOTEM_SIZE, 0, Math.PI * 2);
       ctx.fill();
@@ -382,7 +383,7 @@ function drawEntity(entity) {
       }
 
       // Draw tribesman (square)
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = TEAM_COLORS[tribe.teamId] || '#666';
       ctx.fillRect(screenX - TRIBESMAN_SIZE / 2, screenY - TRIBESMAN_SIZE / 2, TRIBESMAN_SIZE, TRIBESMAN_SIZE);
 
       // Draw health indicator
