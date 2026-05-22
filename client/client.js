@@ -22,6 +22,9 @@ const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7',
 const MIN_MINIMAP_MEADOW_RADIUS = 2;
 const MIN_MINIMAP_TRIBE_SIZE = 3;
 const MINIMAP_TRIBE_SIZE_MULTIPLIER = 2;
+const MINIMAP_WIDTH = 200;
+const MINIMAP_HEIGHT = 200;
+const MINIMAP_MARGIN = 20;
 
 let isDragging = false;
 let dragOffset = { x: 0, y: 0 };
@@ -292,13 +295,14 @@ function drawMinimap() {
     return;
   }
 
-  const minimapWidth = 200;
-  const minimapHeight = 200;
-  const margin = 20;
+  const minimapWidth = MINIMAP_WIDTH;
+  const minimapHeight = MINIMAP_HEIGHT;
+  const margin = MINIMAP_MARGIN;
   const minimapX = canvas.width - minimapWidth - margin;
   const minimapY = canvas.height - minimapHeight - margin;
   const scaleX = minimapWidth / MAP_WIDTH;
   const scaleY = minimapHeight / MAP_HEIGHT;
+  const meadowScale = Math.min(scaleX, scaleY);
 
   ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
   ctx.fillRect(minimapX, minimapY, minimapWidth, minimapHeight);
@@ -310,7 +314,7 @@ function drawMinimap() {
     if (entity.entityType === 'meadow') {
       const meadowX = minimapX + entity.x * scaleX;
       const meadowY = minimapY + entity.y * scaleY;
-      const meadowRadius = Math.max(MIN_MINIMAP_MEADOW_RADIUS, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * scaleX);
+      const meadowRadius = Math.max(MIN_MINIMAP_MEADOW_RADIUS, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * meadowScale);
       ctx.fillStyle = '#0b5f21';
       ctx.beginPath();
       ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
