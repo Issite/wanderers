@@ -6,18 +6,22 @@ import { getNewId, getGameManager } from "../utils.js";
 import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../../shared/constants.js";
 
 class Tribe extends Entity {
-  constructor(id, x, y, name, teamId, teamCode) {
+  constructor(id, x, y, name, teamId, teamCode, aiType = "player") {
     super(id, x, y);
     this.name = name;
     this.teamId = teamId;
     this.teamCode = teamCode;
+    this.aiType = aiType;
     const gameManager = getGameManager();
-    this.tribesmen = [
-      new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
-      new Tribesman(getNewId(gameManager), 0, 0, id, "bow"),
-      // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
-      // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
-    ];
+    this.tribesmen = [];
+    if (aiType === "player") { // i.e. not barbarians
+      this.tribesmen = [
+        new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
+        new Tribesman(getNewId(gameManager), 0, 0, id, "bow"),
+        // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
+        // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
+      ];
+    } // barb tribesmen generation called explicitly
     this.tribesmen.forEach(tribesman => gameManager.entities.set(tribesman.id, tribesman));
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
@@ -31,6 +35,20 @@ class Tribe extends Entity {
       water: 0
     };
     this.targets = []; // Currently only mushrooms.
+  }
+
+  generateBarbarians(size) {
+    const gameManager = getGameManager();
+    for (let i = 0; i <= size; i++) { // not off by one since barb count is meadow size + 1
+      const tool = ["axe", "bow", "hammer", "scythe"][Math.floor(Math.random() * 4)];
+      const tribesman = new Tribesman(getNewId(gameManager), this.x, this.y, this.id, tool);
+      this.tribesmen.push(tribesman);
+      gameManager.entities.set(tribesman.id, tribesman);
+
+      // Bigger tribes give more loot: 2 per minion
+      this.resources[["food", "wood", "gold"][Math.floor(Math.random() * 3)]]++;
+      this.resources[["food", "wood", "gold"][Math.floor(Math.random() * 3)]]++;
+    }
   }
 
   updateDesiredPosition(totemX, totemY) {

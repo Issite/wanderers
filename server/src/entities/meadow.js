@@ -1,6 +1,7 @@
 import {
     MEADOW_BASE_SIZE,
-    MEADOW_SIZE_FACTOR
+    MEADOW_SIZE_FACTOR,
+    INTERACTION_DISTANCE
 } from "../../../shared/constants.js";
 import Entity from "./entity.js";
 import Mushroom from "./mushroom.js";
@@ -99,6 +100,20 @@ class Meadow extends Entity {
 
     getMoisturizedIdiot() {
         this.moisture = Math.min(20, this.moisture + 0.1);
+    }
+
+    proximityCheck(gameManager) {
+        for (const entity of gameManager.entities.values()) {
+            if (entity && entity.constructor.name === "Tribe") {
+                const dx = entity.x - this.x;
+                const dy = entity.y - this.y;
+                const distance = Math.hypot(dx, dy);
+                if (distance < INTERACTION_DISTANCE*2) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     toJSON() {

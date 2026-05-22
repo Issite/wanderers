@@ -13,3 +13,4 @@ export const TASKS = {
     "pickup resource": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
 };
+export const TEAM_COLORS = ["#705429ff", "#9a2222ff", "#4e2c00ff", "#4363d8ff", "#22ca0fff", "#e4da23ff", "#e1ffffff"];
