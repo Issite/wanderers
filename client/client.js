@@ -308,11 +308,7 @@ function drawMinimap() {
       ctx.beginPath();
       ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
       ctx.fill();
-    }
-  });
-
-  gameState.entities.forEach(entity => {
-    if (entity.entityType === 'tribe') {
+    } else if (entity.entityType === 'tribe') {
       const tribeX = minimapX + entity.x * scaleX;
       const tribeY = minimapY + entity.y * scaleY;
       const tribeSize = Math.max(3, Math.sqrt(entity.tribesmen.length) * 2);
