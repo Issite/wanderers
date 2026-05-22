@@ -19,6 +19,9 @@ let mouseMoveData = null;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+const MIN_MINIMAP_MEADOW_RADIUS = 2;
+const MIN_MINIMAP_TRIBE_SIZE = 3;
+const MINIMAP_TRIBE_SIZE_MULTIPLIER = 2;
 
 let isDragging = false;
 let dragOffset = { x: 0, y: 0 };
@@ -285,6 +288,10 @@ function render() {
 }
 
 function drawMinimap() {
+  if (!localTribe || !gameState.entities) {
+    return;
+  }
+
   const minimapWidth = 200;
   const minimapHeight = 200;
   const margin = 20;
@@ -303,7 +310,7 @@ function drawMinimap() {
     if (entity.entityType === 'meadow') {
       const meadowX = minimapX + entity.x * scaleX;
       const meadowY = minimapY + entity.y * scaleY;
-      const meadowRadius = Math.max(2, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * scaleX);
+      const meadowRadius = Math.max(MIN_MINIMAP_MEADOW_RADIUS, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * scaleX);
       ctx.fillStyle = '#0b5f21';
       ctx.beginPath();
       ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
@@ -311,7 +318,7 @@ function drawMinimap() {
     } else if (entity.entityType === 'tribe') {
       const tribeX = minimapX + entity.x * scaleX;
       const tribeY = minimapY + entity.y * scaleY;
-      const tribeSize = Math.max(3, Math.sqrt(entity.tribesmen.length) * 2);
+      const tribeSize = Math.max(MIN_MINIMAP_TRIBE_SIZE, Math.sqrt(entity.tribesmen.length) * MINIMAP_TRIBE_SIZE_MULTIPLIER);
       const isSameTeam = entity.teamId === localTribe.teamId;
       ctx.fillStyle = isSameTeam ? '#00ff66' : '#ff2f2f';
       ctx.fillRect(tribeX - tribeSize / 2, tribeY - tribeSize / 2, tribeSize, tribeSize);
