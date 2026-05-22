@@ -67,8 +67,15 @@ export class GameManager {
   }
 
   spawnBarbarians() {
-    while (this.teamCounts[0] < 8) { // attempt 8 barbarian tribes on meadows
-      const targetMeadow = Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Meadow")[Math.floor(Math.random() * 16)];
+    const meadows = Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Meadow");
+    const maxMeadowSpawnAttempts = Math.max(meadows.length * 8, 1);
+    let meadowSpawnAttempts = 0;
+    while (this.teamCounts[0] < 8 && meadowSpawnAttempts < maxMeadowSpawnAttempts) { // attempt 8 barbarian tribes on meadows
+      meadowSpawnAttempts++;
+      if (meadows.length === 0) {
+        break;
+      }
+      const targetMeadow = meadows[Math.floor(Math.random() * meadows.length)];
       if (targetMeadow && !targetMeadow.proximityCheck(this)) { // Only spawn if no tribes are nearby
         const tempId = getNewId(this);
         const barbarianTribe = new Tribe(tempId, targetMeadow.x, targetMeadow.y, `Barbarian${tempId}`, 0, null, "guard");
@@ -89,6 +96,7 @@ export class GameManager {
         const tempId = getNewId(this);
         const barbarianTribe = new Tribe(tempId, x, y, `Barbarian${tempId}`, 0, null, "guard");
         this.entities.set(barbarianTribe.id, barbarianTribe);
+        this.teamCounts[0]++;
         barbarianTribe.generateBarbarians(0); // Spawn small tribes in random locations to encourage exploration
       }
     }

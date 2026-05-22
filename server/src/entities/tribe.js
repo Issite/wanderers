@@ -14,7 +14,7 @@ class Tribe extends Entity {
     this.aiType = aiType;
     const gameManager = getGameManager();
     this.tribesmen = [];
-    if (aiType == "player") { // i.e. not barbarians
+    if (aiType === "player") { // i.e. not barbarians
       this.tribesmen = [
         new Tribesman(getNewId(gameManager), 0, 0, id, "axe"),
         new Tribesman(getNewId(gameManager), 0, 0, id, "bow"),

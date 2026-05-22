@@ -113,6 +113,7 @@ class Meadow extends Entity {
                 }
             }
         }
+        return false;
     }
 
     toJSON() {
