@@ -48,6 +48,8 @@ export default class Rabbit extends Entity {
                         this.setTarget(null); // Find a new target
                     }
                 }
+            } else {
+                this.setTarget(null); // Target no longer exists, find a new one
             }
         }
     }
