@@ -16,6 +16,7 @@ export class GameManager {
     this.updatesPerSecond = 0;
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
+    this.lastRabbitSpawnTime = Date.now();
     this.lastUpdateTime = Date.now();
     this.deltaTime = 0;
   }
@@ -168,6 +169,12 @@ export class GameManager {
         this.updatesPerSecond = this.updateCount;
         this.updateCount = 0;
         this.lastUpdateCountReset = now;
+      }
+
+      // Spawn rabbits every minute
+      if (now - this.lastRabbitSpawnTime >= 60000) {
+        this.spawnRabbits();
+        this.lastRabbitSpawnTime = now;
       }
       
       if (this.onStateChange) {
