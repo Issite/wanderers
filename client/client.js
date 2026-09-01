@@ -19,9 +19,9 @@ let mouseMoveData = null;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
-const MIN_MINIMAP_MEADOW_RADIUS = 4;
+const MINIMAP_MEADOW_SIZE_MULTIPLIER = 1.5;
 const MIN_MINIMAP_TRIBE_SIZE = 5;
-const MINIMAP_TRIBE_SIZE_MULTIPLIER = 3;
+const MINIMAP_TRIBE_SIZE_MULTIPLIER = 5;
 const MINIMAP_WIDTH = 200;
 const MINIMAP_HEIGHT = 200;
 const MINIMAP_MARGIN = 20;
@@ -321,7 +321,7 @@ function drawMinimap() {
     if (entity.entityType === 'meadow') {
       const meadowX = minimapX + entity.x * scaleX;
       const meadowY = minimapY + entity.y * scaleY;
-      const meadowRadius = Math.max(MIN_MINIMAP_MEADOW_RADIUS, (MEADOW_BASE_SIZE + entity.size) * MEADOW_SIZE_FACTOR * meadowScale);
+      const meadowRadius = (MEADOW_BASE_SIZE + entity.size) * MINIMAP_MEADOW_SIZE_MULTIPLIER * MEADOW_SIZE_FACTOR * meadowScale;
       ctx.fillStyle = '#0b5f21';
       ctx.beginPath();
       ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
