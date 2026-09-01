@@ -85,6 +85,9 @@ wss.on('connection', (ws) => {
             success: false
           }));
         }
+      } else if (data.type === 'dropResource') {
+        const tribeId = clients.get(ws);
+        gameManager.dropResource(tribeId, data.resourceType);
       }
     } catch (error) {
       console.error('Error handling message:', error);

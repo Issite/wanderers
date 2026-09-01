@@ -253,6 +253,14 @@ export class GameManager {
     return this.entities.get(tribeId).tryTargetMushroom(mushroomId);
   }
 
+  dropResource(tribeId, type) {
+    const tribe = this.entities.get(tribeId);
+    if (tribe && tribe.resources[type] > 0) {
+      tribe.resources[type]--;
+      this.spawnResources(tribe.x, tribe.y, [type]);
+    }
+  }
+
   spawnResources(x, y, resourceTypes) {
     resourceTypes.forEach(type => {
       const resourceId = getNewId(this);
