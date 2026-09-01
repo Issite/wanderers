@@ -1,9 +1,10 @@
 import Tribe from "./entities/tribe.js";
 import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
+import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT } from "../../shared/constants.js";
+import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -23,6 +24,7 @@ export class GameManager {
     this.createMeadows();
     this.createPosts();
     this.spawnBarbarians();
+    this.spawnRabbits();
   }
 
   createMeadows() {
@@ -99,6 +101,18 @@ export class GameManager {
         this.teamCounts[0]++;
         barbarianTribe.generateBarbarians(0); // Spawn small tribes in random locations to encourage exploration
       }
+    }
+  }
+
+  spawnRabbits() {
+    const currentRabbitCount = Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Rabbit").length;
+    const rabbitsToSpawn = TARGET_RABBIT_POPULATION - currentRabbitCount;
+    for (let i = 0; i < rabbitsToSpawn; i++) {
+      const x = Math.random() * MAP_WIDTH;
+      const y = Math.random() * MAP_HEIGHT;
+      const rabbitId = getNewId(this);
+      const rabbit = new Rabbit(rabbitId, x, y);
+      this.entities.set(rabbit.id, rabbit);
     }
   }
 

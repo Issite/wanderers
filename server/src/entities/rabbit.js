@@ -1,5 +1,4 @@
 import Entity from "./entity.js";
-import Grass from "./grass.js";
 import { RABBIT_MOVE_SPEED } from "../../../shared/constants.js";
 
 export default class Rabbit extends Entity {
@@ -7,7 +6,7 @@ export default class Rabbit extends Entity {
         super(id, x, y);
         this.health = health;
         this.target = target;
-        this.cooldown = 3000;
+        this.cooldown = 5;
     }
 
     setTarget(target) {
@@ -29,8 +28,8 @@ export default class Rabbit extends Entity {
                 const dy = targetEntity.y - this.y;
                 const distance = Math.hypot(dx, dy);
                 if (distance > 1) { // Avoid jittering when very close
-                    const moveX = (dx / distance) * RABBIT_MOVE_SPEED * (gameManager.deltaTime / 1000);
-                    const moveY = (dy / distance) * RABBIT_MOVE_SPEED * (gameManager.deltaTime / 1000);
+                    const moveX = (dx / distance) * RABBIT_MOVE_SPEED * gameManager.deltaTime;
+                    const moveY = (dy / distance) * RABBIT_MOVE_SPEED * gameManager.deltaTime;
                     this.x += moveX;
                     this.y += moveY;
                 } else { // Reached the grass
@@ -38,7 +37,7 @@ export default class Rabbit extends Entity {
                     this.y = targetEntity.y;
                     this.cooldown -= gameManager.deltaTime;
                     if (this.cooldown <= 0) {
-                        this.cooldown = 3000;
+                        this.cooldown = 5;
                         gameManager.entities.delete(targetEntity.id); // Eat the grass
                         this.setTarget(null); // Find a new target
                     }
