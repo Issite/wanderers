@@ -57,10 +57,6 @@ class Tribe extends Entity {
   }
 
   update(gameManager) {
-    const now = Date.now();
-    const deltaTime = (now - this.lastUpdateTime) / 1000; // Convert to seconds
-    this.lastUpdateTime = now;
-
     // Calculate distance to desired position
     const dx = this.desiredX - this.x;
     const dy = this.desiredY - this.y;
@@ -68,7 +64,7 @@ class Tribe extends Entity {
 
     if (distance > 0) {
       // Calculate maximum distance tribe can move this frame
-      const maxDistance = this.maxMoveSpeed * deltaTime;
+      const maxDistance = this.maxMoveSpeed * gameManager.deltaTime;
 
       if (distance <= maxDistance) {
         // Can reach desired position

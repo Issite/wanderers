@@ -540,6 +540,25 @@ function drawEntity(entity) {
     ctx.beginPath();
     ctx.arc(screenX, screenY, 15, 0, Math.PI * 2);
     ctx.fill();
+  } else if (entity.entityType === 'rabbit') {
+    const rabbit = entity;
+    const screenX = rabbit.x - cameraX;
+    const screenY = rabbit.y - cameraY;
+
+    // Only draw if rabbit is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = '#fff1e4ff';
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 10, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
