@@ -28,10 +28,16 @@ export default class Rabbit extends Entity {
                 const dy = targetEntity.y - this.y;
                 const distance = Math.hypot(dx, dy);
                 if (distance > 1) { // Avoid jittering when very close
-                    const moveX = (dx / distance) * RABBIT_MOVE_SPEED * gameManager.deltaTime;
-                    const moveY = (dy / distance) * RABBIT_MOVE_SPEED * gameManager.deltaTime;
-                    this.x += moveX;
-                    this.y += moveY;
+                    const maxDistance = RABBIT_MOVE_SPEED * gameManager.deltaTime;
+                    if (distance <= maxDistance) {
+                        this.x = targetEntity.x;
+                        this.y = targetEntity.y;
+                    } else {
+                        const moveX = (dx / distance) * maxDistance;
+                        const moveY = (dy / distance) * maxDistance;
+                        this.x += moveX;
+                        this.y += moveY;
+                    }
                 } else { // Reached the grass
                     this.x = targetEntity.x;
                     this.y = targetEntity.y;
