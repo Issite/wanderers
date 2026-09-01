@@ -57,9 +57,6 @@ class Tribe extends Entity {
   }
 
   update(gameManager) {
-    const now = Date.now();
-    this.lastUpdateTime = now;
-
     // Calculate distance to desired position
     const dx = this.desiredX - this.x;
     const dy = this.desiredY - this.y;
