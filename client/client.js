@@ -19,6 +19,12 @@ let mouseMoveData = null;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+const MINIMAP_MEADOW_SIZE_MULTIPLIER = 1.5;
+const MIN_MINIMAP_TRIBE_SIZE = 5;
+const MINIMAP_TRIBE_SIZE_MULTIPLIER = 5;
+const MINIMAP_WIDTH = 200;
+const MINIMAP_HEIGHT = 200;
+const MINIMAP_MARGIN = 20;
 
 let isDragging = false;
 let dragOffset = { x: 0, y: 0 };
@@ -266,6 +272,9 @@ function render() {
   // Draw resources
   drawResources();
 
+  // Draw minimap
+  drawMinimap();
+
   // Draw debug info
   drawDebugInfo();
 
@@ -279,6 +288,54 @@ function render() {
   }
 
   requestAnimationFrame(render);
+}
+
+function drawMinimap() {
+  if (!localTribe || !gameState.entities) {
+    return;
+  }
+
+  const minimapWidth = MINIMAP_WIDTH;
+  const minimapHeight = MINIMAP_HEIGHT;
+  const margin = MINIMAP_MARGIN;
+  const minimapX = canvas.width - minimapWidth - margin;
+  const minimapY = canvas.height - minimapHeight - margin;
+  const minimapCenterX = minimapX + minimapWidth / 2;
+  const minimapCenterY = minimapY + minimapHeight / 2;
+  const minimapRadius = Math.min(minimapWidth, minimapHeight) / 2;
+  const scaleX = minimapWidth / MAP_WIDTH;
+  const scaleY = minimapHeight / MAP_HEIGHT;
+  const meadowScale = Math.min(scaleX, scaleY);
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.beginPath();
+  ctx.arc(minimapCenterX, minimapCenterY, minimapRadius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(minimapCenterX, minimapCenterY, minimapRadius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  gameState.entities.forEach(entity => {
+    if (entity.entityType === 'meadow') {
+      const meadowX = minimapX + entity.x * scaleX;
+      const meadowY = minimapY + entity.y * scaleY;
+      const meadowRadius = (MEADOW_BASE_SIZE + entity.size) * MINIMAP_MEADOW_SIZE_MULTIPLIER * MEADOW_SIZE_FACTOR * meadowScale;
+      ctx.fillStyle = '#0b5f21';
+      ctx.beginPath();
+      ctx.arc(meadowX, meadowY, meadowRadius, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (entity.entityType === 'tribe') {
+      const tribeX = minimapX + entity.x * scaleX;
+      const tribeY = minimapY + entity.y * scaleY;
+      const tribesmenCount = Array.isArray(entity.tribesmen) ? entity.tribesmen.length : 0;
+      const tribeSize = Math.max(MIN_MINIMAP_TRIBE_SIZE, Math.sqrt(tribesmenCount) * MINIMAP_TRIBE_SIZE_MULTIPLIER);
+      const isSameTeam = entity.teamId === localTribe.teamId;
+      ctx.fillStyle = isSameTeam ? '#00ff66' : '#ff2f2f';
+      ctx.fillRect(tribeX - tribeSize / 2, tribeY - tribeSize / 2, tribeSize, tribeSize);
+    }
+  });
 }
 
 function drawDebugInfo() {
