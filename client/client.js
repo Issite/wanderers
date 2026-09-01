@@ -19,9 +19,9 @@ let mouseMoveData = null;
 const TRIBESMAN_SIZE = 15;
 const TOTEM_SIZE = 25;
 const TRIBESMAN_COLORS = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
-const MIN_MINIMAP_MEADOW_RADIUS = 2;
-const MIN_MINIMAP_TRIBE_SIZE = 3;
-const MINIMAP_TRIBE_SIZE_MULTIPLIER = 2;
+const MIN_MINIMAP_MEADOW_RADIUS = 4;
+const MIN_MINIMAP_TRIBE_SIZE = 5;
+const MINIMAP_TRIBE_SIZE_MULTIPLIER = 3;
 const MINIMAP_WIDTH = 200;
 const MINIMAP_HEIGHT = 200;
 const MINIMAP_MARGIN = 20;
@@ -300,15 +300,22 @@ function drawMinimap() {
   const margin = MINIMAP_MARGIN;
   const minimapX = canvas.width - minimapWidth - margin;
   const minimapY = canvas.height - minimapHeight - margin;
+  const minimapCenterX = minimapX + minimapWidth / 2;
+  const minimapCenterY = minimapY + minimapHeight / 2;
+  const minimapRadius = Math.min(minimapWidth, minimapHeight) / 2;
   const scaleX = minimapWidth / MAP_WIDTH;
   const scaleY = minimapHeight / MAP_HEIGHT;
   const meadowScale = Math.min(scaleX, scaleY);
 
   ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.fillRect(minimapX, minimapY, minimapWidth, minimapHeight);
+  ctx.beginPath();
+  ctx.arc(minimapCenterX, minimapCenterY, minimapRadius, 0, Math.PI * 2);
+  ctx.fill();
   ctx.strokeStyle = '#888';
   ctx.lineWidth = 2;
-  ctx.strokeRect(minimapX, minimapY, minimapWidth, minimapHeight);
+  ctx.beginPath();
+  ctx.arc(minimapCenterX, minimapCenterY, minimapRadius, 0, Math.PI * 2);
+  ctx.stroke();
 
   gameState.entities.forEach(entity => {
     if (entity.entityType === 'meadow') {
