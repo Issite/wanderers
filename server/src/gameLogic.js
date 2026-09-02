@@ -255,11 +255,16 @@ export class GameManager {
 
   dropResource(tribeId, type) {
     const tribe = this.entities.get(tribeId);
-    if (tribe && tribe.resources[type] > 0) {
-      tribe.resources[type]--;
-      let droppedResources = this.spawnResources(tribe.x, tribe.y, [type]);
-      tribe.avoidResources(droppedResources);
+    if (!tribe || typeof type !== "string" || !Object.prototype.hasOwnProperty.call(tribe.resources, type)) {
+      return;
     }
+    if (tribe.resources[type] <= 0) {
+      return;
+    }
+
+    tribe.resources[type]--;
+    const droppedResources = this.spawnResources(tribe.x, tribe.y, [type]);
+    tribe.avoidResources(droppedResources);
   }
 
   spawnResources(x, y, resourceTypes) {
