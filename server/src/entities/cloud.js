@@ -45,9 +45,7 @@ export default class Cloud extends Entity {
     pickNewTarget(gameManager) {
         let meadows = Array.from(gameManager.entities.values()).filter(entity => entity && entity.constructor.name === "Meadow");
         meadows = meadows.filter(meadow => !meadow.doomed);
-        console.log(`Top meadow before sorting: ${meadows.map(m => `Meadow ${m.id} last watered at ${m.lastWateredTime}`).join(", ")}`);
-        meadows.sort((a, b) => {a.lastWateredTime - b.lastWateredTime});
-        console.log(`Top meadow after sorting: ${meadows.map(m => `Meadow ${m.id} last watered at ${m.lastWateredTime}`).join(", ")}`);
+        meadows = meadows.sort((a, b) => a.lastWateredTime - b.lastWateredTime);
         if (meadows.length > 0) {
             this.target = meadows[0];
             this.target.itsSoJover();
