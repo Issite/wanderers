@@ -88,15 +88,8 @@ function handleCanvasMouseDown(e) {
   let resourceX = (canvas.width / 2) - ((resourceTypes.length * 100) / 2);
   const resourceY = 50;
   resourceTypes.forEach(type => {
-    // Rect boxes
-    // ctx.fillRect(resourceX, resourceY - 20, 90, 20);
-
-    console.log(`Checking resource box for ${type}: (${resourceX}, ${resourceX + 90}) (${resourceY - 20}, ${resourceY})`);
-    console.log(`Mouse position: (${mouseX}, ${mouseY})`);
     if (mouseX >= resourceX && mouseX <= resourceX + 90 && mouseY >= resourceY - 20 && mouseY <= resourceY) {
-      // Clicked on resource box
-      console.log(`Clicked on resource: ${type}`);
-      // Send drop resource request to server
+      // Clicked on resource box; send drop resource request to server
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: 'dropResource',
@@ -106,7 +99,7 @@ function handleCanvasMouseDown(e) {
         shortcut = true; // Prevent further processing of this click
       }
     }
-    
+
     resourceX += 100;
   });
 
