@@ -4,7 +4,7 @@ import Post from "./entities/post.js";
 import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
 import { getNewId } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION } from "../../shared/constants.js";
+import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -66,6 +66,16 @@ export class GameManager {
       const postId = getNewId(this);
       const post = new Post(postId, x, y, i);
       this.entities.set(post.id, post);
+    }
+  }
+
+  createClouds() {
+    for (let i = 0; i < CLOUD_COUNT; i++) {
+      const x = Math.random() * MAP_WIDTH;
+      const y = Math.random() * MAP_HEIGHT;
+      const cloudId = getNewId(this);
+      const cloud = new Cloud(cloudId, x, y, null, false);
+      this.entities.set(cloud.id, cloud);
     }
   }
 
