@@ -16,7 +16,7 @@ export default class Cloud extends Entity {
             const dy = this.target.y - this.y;
             const distance = Math.hypot(dx, dy);
 
-            if (distance >= maxDistance) {
+            if (distance > maxDistance && distance > 0) {
                 this.x += (dx / distance) * maxDistance;
                 this.y += (dy / distance) * maxDistance;
             } else {
