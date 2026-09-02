@@ -72,7 +72,7 @@ function setupCanvas() {
 }
 
 function handleCanvasMouseDown(e) {
-  if (tribeID === null) {
+  if (tribeID === null || !localTribe || !localTribe.resources) {
     // console.log('Not in game yet, ignoring mouse down');
     return;
   };
