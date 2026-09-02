@@ -257,11 +257,13 @@ export class GameManager {
     const tribe = this.entities.get(tribeId);
     if (tribe && tribe.resources[type] > 0) {
       tribe.resources[type]--;
-      this.spawnResources(tribe.x, tribe.y, [type]);
+      let droppedResources = this.spawnResources(tribe.x, tribe.y, [type]);
+      tribe.avoidResources(droppedResources);
     }
   }
 
   spawnResources(x, y, resourceTypes) {
+    let spawnedResources = [];
     resourceTypes.forEach(type => {
       const resourceId = getNewId(this);
       const offset = 40;
@@ -271,7 +273,9 @@ export class GameManager {
       const resourceY = y + radius * Math.sin(angle);
       const resource = new Resource(resourceId, resourceX, resourceY, type);
       this.entities.set(resourceId, resource);
+      spawnedResources.push(resource);
     });
+    return spawnedResources;
   }
 
   stopUpdateLoop() {
