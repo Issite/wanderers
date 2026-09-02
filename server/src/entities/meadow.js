@@ -17,22 +17,23 @@ class Meadow extends Entity {
         this.size = size;
         this.moisture = moisture;
         this.lastWateredTime = lastWateredTime;
+        this.doomed = false; // whether this meadow is being targeted by a cloud for rain
         this.isCenter = isCenter;
         this.growths = [];
         this.getRainedOnIdiot(gameManager);
     }
 
-    getRainedOnIdiot(gameManager) {
+    getRainedOnIdiot(gameManager) { // called the first frame a cloud rains on this meadow, refreshing spawns
         const pixelSize = (MEADOW_BASE_SIZE + this.size) * MEADOW_SIZE_FACTOR;
 
         // Filter out removed growths, and count each type
         this.growths = this.growths.filter(growth => 
-            gameManager.entities.values().includes(growth)
+            gameManager.entities.values().some(entity => entity && entity.id === growth.id)
         );
-        const mushroomCount = this.growths.filter(g => g.isInstanceOf(Mushroom)).length;
-        const treeCount = this.growths.filter(g => g.isInstanceOf(Tree)).length;
-        const grassCount = this.growths.filter(g => g.isInstanceOf(Grass)).length;
-        const rockCount = this.growths.filter(g => g.isInstanceOf(Rock)).length;
+        const mushroomCount = this.growths.filter(g => g.constructor.name === "Mushroom").length;
+        const treeCount = this.growths.filter(g => g.constructor.name === "Tree").length;
+        const grassCount = this.growths.filter(g => g.constructor.name === "Grass").length;
+        const rockCount = this.growths.filter(g => g.constructor.name === "Rock").length;
 
         // Generate mushrooms (3 per meadow size) with 50% chance each
         for (let i = 0; i < (this.size + 1) * 3 - mushroomCount; i++) {
@@ -98,8 +99,16 @@ class Meadow extends Entity {
         this.getMoisturizedIdiot();
     }
 
-    getMoisturizedIdiot() {
+    getMoisturizedIdiot() { // called every frame to increase moisture, up to a max of 20
         this.moisture = Math.min(20, this.moisture + 0.1);
+    }
+
+    itsSoJover() { // called when a cloud targets this meadow
+        this.doomed = true;
+    }
+
+    itsNotSoJover() { // called when a cloud stops targeting this meadow
+        this.doomed = false;
     }
 
     proximityCheck(gameManager) {

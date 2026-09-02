@@ -652,6 +652,36 @@ function drawEntity(entity) {
     ctx.beginPath();
     ctx.arc(screenX, screenY, 10, 0, Math.PI * 2);
     ctx.fill();
+  } else if (entity.entityType === 'cloud') {
+    const cloud = entity;
+    const screenX = cloud.x - cameraX;
+    const screenY = cloud.y - cameraY;
+
+    // Only draw if cloud is on screen
+    if (
+      screenX + 50 < 0 ||
+      screenX - 50 > canvas.width ||
+      screenY + 50 < 0 ||
+      screenY - 50 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = 'rgba(200, 200, 200, 0.7)';
+    ctx.beginPath();
+    ctx.arc(screenX, screenY, 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (cloud.isRaining) {
+      ctx.strokeStyle = 'rgba(100, 100, 255, 0.5)';
+      ctx.lineWidth = 2;
+      for (let i = -30; i <= 30; i += 10) {
+        ctx.beginPath();
+        ctx.moveTo(screenX + i, screenY + 40);
+        ctx.lineTo(screenX + i, screenY + 60);
+        ctx.stroke();
+      }
+    }
   }
 }
 

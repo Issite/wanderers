@@ -31,3 +31,7 @@ The server is getting super laggy and slow after about a minute of being open wi
 ---
 The camera currently is not following the player around. If the current tribe leaves the inner third (ninth) of the screen, it should smoothly scroll the camera until the tribe is in the center.
     - ✓ Implemented: Camera now uses deadzone system - tribe can move freely in inner third of screen without camera moving. Once tribe exits deadzone, camera smoothly interpolates to re-center tribe at 500 px/sec. Creates natural, lag-free following behavior.
+---
+- Movement should be standardized.
+- All game logic should be moved out of websocket message handlers and into the game loop.
+- Constants should be used in place of all "magic numbers" in the code.
