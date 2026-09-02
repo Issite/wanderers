@@ -1,5 +1,5 @@
 import Entity from "./entity.js";
-import { CLOUD_SPEED, CLOUD_RAIN_TIME } from "../../../constants.js";
+import { CLOUD_SPEED, CLOUD_RAIN_TIME } from "../../../shared/constants.js";
 
 export default class Cloud extends Entity {
     constructor(id, x, y, target, isRaining = false) {
@@ -24,7 +24,7 @@ export default class Cloud extends Entity {
                 this.y = this.target.y;
 
                 if (!this.isRaining) {
-                    this.target.getRainedOnIdiot();
+                    this.target.getRainedOnIdiot(gameManager);
                     this.isRaining = true;
                     this.rainTimer = CLOUD_RAIN_TIME;
                 } else {
@@ -32,6 +32,7 @@ export default class Cloud extends Entity {
                     this.rainTimer -= gameManager.deltaTime;
                     if (this.rainTimer <= 0) {
                         this.isRaining = false;
+                        this.target.itsNotSoJover();
                         this.pickNewTarget(gameManager);
                     }
                 }
@@ -42,10 +43,14 @@ export default class Cloud extends Entity {
     }
 
     pickNewTarget(gameManager) {
-        const meadows = Array.from(gameManager.entities.values()).filter(entity => entity.constructor.name === "Meadow");
+        let meadows = Array.from(gameManager.entities.values()).filter(entity => entity && entity.constructor.name === "Meadow");
+        meadows = meadows.filter(meadow => !meadow.doomed);
+        console.log(`Top meadow before sorting: ${meadows.map(m => `Meadow ${m.id} last watered at ${m.lastWateredTime}`).join(", ")}`);
         meadows.sort((a, b) => {a.lastWateredTime - b.lastWateredTime});
+        console.log(`Top meadow after sorting: ${meadows.map(m => `Meadow ${m.id} last watered at ${m.lastWateredTime}`).join(", ")}`);
         if (meadows.length > 0) {
             this.target = meadows[0];
+            this.target.itsSoJover();
         } else {
             this.target = null;
         }

@@ -3,6 +3,7 @@ import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
 import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
+import Cloud from "./entities/cloud.js";
 import { getNewId } from "./utils.js";
 import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
 
@@ -24,6 +25,7 @@ export class GameManager {
   createWorld() {
     this.createMeadows();
     this.createPosts();
+    this.createClouds();
     this.spawnBarbarians();
     this.spawnRabbits();
   }
