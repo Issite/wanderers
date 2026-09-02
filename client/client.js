@@ -72,15 +72,42 @@ function setupCanvas() {
 }
 
 function handleCanvasMouseDown(e) {
-  if (tribeID === null) {
+  if (tribeID === null || !localTribe || !localTribe.resources) {
     // console.log('Not in game yet, ignoring mouse down');
     return;
   };
   
+  let shortcut = false;
   const rect = canvas.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
+
+
+  const resourceTypes = Object.keys(localTribe.resources);
+
+  let resourceX = (canvas.width / 2) - ((resourceTypes.length * 100) / 2);
+  const resourceY = 50;
+  resourceTypes.forEach(type => {
+    if (mouseX >= resourceX && mouseX <= resourceX + 90 && mouseY >= resourceY - 20 && mouseY <= resourceY) {
+      // Clicked on resource box; send drop resource request to server
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'dropResource',
+          resourceType: type
+        }));
+
+        shortcut = true; // Prevent further processing of this click
+      }
+    }
+
+    resourceX += 100;
+  });
+
+  if (shortcut) {
+    return;
+  }
   
+
   // Convert screen coordinates to world coordinates
   const worldX = mouseX + cameraX;
   const worldY = mouseY + cameraY;
@@ -94,6 +121,9 @@ function handleCanvasMouseDown(e) {
     dragOffset.x = worldX - totem.x;
     dragOffset.y = worldY - totem.y;
     canvas.style.cursor = 'grabbing';
+
+    shortcut = true; // Prevent further processing of this click, but we can just
+    return; //here since dragging will handle the rest
   }
 
   if (gameState.entities) {
@@ -105,9 +135,15 @@ function handleCanvasMouseDown(e) {
 
         if (mushroomDistance < 10) {
           targetMushroom(entity.id);
+
+          shortcut = true; // Prevent further processing of this click
         }
       }
     });
+
+    if (shortcut) {
+      return;
+    }
   }
 }
 

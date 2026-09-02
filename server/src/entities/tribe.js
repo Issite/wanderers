@@ -3,7 +3,7 @@ import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
 import Task from "../task.js";
 import { getNewId, getGameManager } from "../utils.js";
-import { MAX_MOVE_SPEED, INTERACTION_DISTANCE } from "../../../shared/constants.js";
+import { MAX_MOVE_SPEED, INTERACTION_DISTANCE, DROPPED_RESOURCE_AVOID_TIME } from "../../../shared/constants.js";
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode, aiType = "player") {
@@ -34,6 +34,7 @@ class Tribe extends Entity {
       gold: 0,
       water: 0
     };
+    this.avoidingResources = {}; // Resources to avoid for a certain time after dropping
     this.targets = []; // Currently only mushrooms.
   }
 
@@ -75,6 +76,14 @@ class Tribe extends Entity {
         const angle = Math.atan2(dy, dx);
         this.x += Math.cos(angle) * maxDistance;
         this.y += Math.sin(angle) * maxDistance;
+      }
+    }
+
+    // Decrement times on avoiding resources
+    for (const resourceId in this.avoidingResources) {
+      this.avoidingResources[resourceId] -= gameManager.deltaTime;
+      if (this.avoidingResources[resourceId] <= 0) {
+        delete this.avoidingResources[resourceId];
       }
     }
 
@@ -125,10 +134,12 @@ class Tribe extends Entity {
               });
             break;
           case "Resource":
-            const task = new Task("pickup resource", entity.id);
-            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
-            if (idleTribesman) {
-              idleTribesman.addTask(task);
+            if (!this.avoidingResources[entity.id]) { // Only pick up if not avoiding
+              const task = new Task("pickup resource", entity.id);
+              const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+              if (idleTribesman) {
+                idleTribesman.addTask(task);
+              }
             }
             break;
         }
@@ -149,6 +160,12 @@ class Tribe extends Entity {
     if (this.resources[type] !== undefined) {
       this.resources[type]++;
     }
+  }
+
+  avoidResources(resources) {
+    resources.forEach(resource => {
+      this.avoidingResources[resource.id] = DROPPED_RESOURCE_AVOID_TIME;
+    });
   }
 
   toJSON() {
