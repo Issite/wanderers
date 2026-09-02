@@ -6,6 +6,7 @@ export default class Cloud extends Entity {
         super(id, x, y);
         this.target = target;
         this.isRaining = isRaining;
+        this.rainTimer = 0;
     }
 
     update(gameManager) {
@@ -18,7 +19,25 @@ export default class Cloud extends Entity {
             if (distance >= maxDistance) {
                 this.x += (dx / distance) * maxDistance;
                 this.y += (dy / distance) * maxDistance;
+            } else {
+                this.x = this.target.x;
+                this.y = this.target.y;
+
+                if (!this.isRaining) {
+                    this.target.getRainedOnIdiot();
+                    this.isRaining = true;
+                    this.rainTimer = CLOUD_RAIN_TIME;
+                } else {
+                    this.target.getMoisturizedIdiot();
+                    this.rainTimer -= gameManager.deltaTime;
+                    if (this.rainTimer <= 0) {
+                        this.isRaining = false;
+                        this.pickNewTarget(gameManager);
+                    }
+                }
             }
+        } else {
+            this.pickNewTarget(gameManager);
         }
     }
 
