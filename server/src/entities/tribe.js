@@ -109,6 +109,12 @@ class Tribe extends Entity {
       const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
       if (distanceToEntity <= INTERACTION_DISTANCE) {
         switch (entity.constructor.name) {
+          case "Tribe":
+            if (entity.teamId === this.teamId) {
+              break;
+            }
+            this.fightTribe(entity);
+            break;
           case "Tree":
             this.tribesmen.forEach(tribesman => {
               if (tribesman.tool === "axe") {
@@ -145,6 +151,11 @@ class Tribe extends Entity {
         }
       }
     });
+  }
+
+  fightTribe(otherTribe) {
+    // pain
+    
   }
 
   tryTargetMushroom(mushroomId) {
