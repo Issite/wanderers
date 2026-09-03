@@ -181,8 +181,10 @@ class Tribe extends Entity {
     });
     this.tribesmen.forEach(tribesman => {
       if (tribesman.tasks[0].type === "fight") {
-        if (tribesman.tasks[0].targetId in hitList) {
-          hitList.find(hit => hit.tribesman.id === tribesman.tasks[0].targetId).targeted = true;
+        const currentTargetId = tribesman.tasks[0].targetId;
+        const currentTarget = hitList.find(hit => hit.tribesman.id === currentTargetId);
+        if (currentTarget) {
+          currentTarget.targeted = true;
           return; // Already has a living target
         } else {
           tribesman.tasks.shift(); // Remove invalid target
