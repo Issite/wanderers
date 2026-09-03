@@ -212,6 +212,10 @@ class Tribe extends Entity {
     })
   }
 
+  removeTribesman(tribesmanId) {
+    this.tribesmen = this.tribesmen.filter(tribesman => tribesman.id !== tribesmanId);
+  }
+
   tryTargetMushroom(mushroomId) {
     const mushroom = getGameManager().entities.get(mushroomId);
     if (mushroom && mushroom.constructor.name === "Mushroom" && !this.targets.includes(mushroomId) && Math.hypot(this.x - mushroom.x, this.y - mushroom.y) <= INTERACTION_DISTANCE) {

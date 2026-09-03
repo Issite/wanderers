@@ -18,8 +18,9 @@ export default class Tribesman extends Entity {
     this.health -= amount;
     if (this.health <= 0) {
       this.health = 0;
-      // Handle death (e.g., remove from game, drop resources, etc.)
+      return true; // Tribesman is dead
     }
+    return false; // Tribesman is still alive
   }
 
   addTask(task) {

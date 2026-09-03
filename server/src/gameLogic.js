@@ -197,6 +197,19 @@ export class GameManager {
 
   completeTask(tribesman, task) {
     switch (task.type) {
+      case "fight":
+        const target = this.entities.get(task.targetId);
+        if (target && target.constructor.name === "Tribesman") {
+          if (target.damage(1)) {
+            this.killTribesman(target.id);
+            // Now each tribe need to recalculate their matchups
+            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId);
+            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId);
+            return true; // Task complete if target is dead
+          }
+        }
+        return false; // Fight tasks are ongoing until the target is dead
+        break;
       case "chop tree":
         const tree = this.entities.get(task.targetId);
         if (tree) {
@@ -250,7 +263,9 @@ export class GameManager {
           if (mushroom.type < 4) {
             this.entities.get(tribesman.tribeId).addResource("food");
           } else {
-            tribesman.damage(1);
+            if (tribesman.damage(1)) {
+              this.killTribesman(tribesman.id);
+            }
           }
           this.entities.delete(mushroom.id);
         }
@@ -258,6 +273,17 @@ export class GameManager {
         break;
       default:
         return true; // Other tasks complete immediately
+    }
+  }
+
+  killTribesman(tribesmanId) {
+    const tribesman = this.entities.get(tribesmanId);
+    if (tribesman && tribesman.constructor.name === "Tribesman") {
+      this.entities.delete(tribesmanId);
+      const tribe = this.entities.get(tribesman.tribeId);
+      if (tribe) {
+        tribe.removeTribesman(tribesmanId);
+      }
     }
   }
 
