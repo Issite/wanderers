@@ -1,5 +1,6 @@
 import Entity from "./entity.js";
 import Task from "../task.js";
+import TOOL_ATTACK_COOLDOWNS from "../../../shared/constants.js";
 
 export default class Tribesman extends Entity {
   constructor(id, x, y, tribeId, tool = "none", armor = 0, health = 3) {
@@ -26,7 +27,12 @@ export default class Tribesman extends Entity {
       this.tasks.push(task);
       this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
       if (this.cooldown === 0) {
-        this.cooldown = this.tasks[0].cooldownTime;
+        if (this.tasks[0].type === "fight") {
+          const attackVariance = Math.random() * 0.4 - 0.2; // Random variance between -0.2 and 0.2
+          this.cooldown = TOOL_ATTACK_COOLDOWNS[this.tool] + attackVariance;
+        } else {
+          this.cooldown = this.tasks[0].cooldownTime;
+        }
       }
     }
   }

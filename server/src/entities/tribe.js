@@ -182,6 +182,12 @@ class Tribe extends Entity {
           tribesman.addTask(task);
           break;
         case "dagger":
+          /* Try, in order:
+          * Find a target that is not already targeted and has a bow
+          * Find first target that has a bow
+          * Find a target that is not already targeted
+          * Find first target
+          */
           targetId = hitList.find(hit => !hit.targeted && hit.tribesman.tool === "bow");
           if (!targetId) {
             targetId = hitList.find(hit => hit.tribesman.tool === "bow");
