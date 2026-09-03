@@ -39,7 +39,6 @@ export default class Tribesman extends Entity {
       if (this.cooldown <= 0) {
         this.cooldown = 0;
         if (gameManager.completeTask(this, this.tasks[0])) { // i.e. I'm done this step. Am I done?
-          console.log(`Tribesman ${this.id} completed task ${this.tasks[0].type} targeting ${this.tasks[0].targetId}`);
           this.tasks.shift(); // Remove completed task
           this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
           this.targetId = this.tasks[0] ? this.tasks[0].targetId : null; // Update targetId to the next task's targetId

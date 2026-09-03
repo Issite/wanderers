@@ -1,4 +1,4 @@
-function getNewId(gameManager) {
+export function getNewId(gameManager) {
   let id = 0;
   while (gameManager.entities.has(id)) {
     id = Math.floor(Math.random() * 10000);
@@ -7,7 +7,7 @@ function getNewId(gameManager) {
   return id;
 }
 
-function releaseId(gameManager, id) {
+export function releaseId(gameManager, id) {
   gameManager.entities.delete(id);
 }
 
@@ -21,4 +21,32 @@ export function getGameManager() {
   return gameManager;
 }
 
-export { getNewId, releaseId };
+let wss;
+
+export function setWebSocketServer(server) {
+  wss = server;
+}
+
+export function getWebSocketServer() {
+  return wss;
+}
+
+let clients = new Map();
+
+export function setClientsMap(map) {
+  clients = map;
+}
+
+export function getClientsMap() {
+  return clients;
+}
+
+export function sendGameOverMessage(tribeId) {
+  const message = JSON.stringify({
+    type: 'gameOver',
+  });
+  const client = getClientsMap().entries().find(([ws, id]) => id === tribeId)?.[0];
+  if (client && client.readyState === 1) {
+    client.send(message);
+  }
+}

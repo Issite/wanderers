@@ -174,7 +174,6 @@ class Tribe extends Entity {
       return; // Other tribe is dead
     }
     this.opponentTribeId = otherTribe.id;
-    console.log(`Tribe ${this.name} is fighting Tribe ${otherTribe.name}`);
     const otherTribesmen = otherTribe.tribesmen.sort((a, b) => TRIBESMAN_ATTACK_PRIORITIES[a.tool] - TRIBESMAN_ATTACK_PRIORITIES[b.tool]);
     let hitList = [];
     otherTribesmen.forEach(tribesman => {

@@ -226,6 +226,8 @@ function connectWebSocket() {
       showGameScreen();
     } else if (data.type === 'registered') {
       console.log('Registered with tribe ID:', data.tribeId);
+    } else if (data.type === 'gameOver') {
+      console.log('Game over for tribe:', data.tribeId);
     }
   };
 

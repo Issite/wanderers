@@ -4,7 +4,7 @@ import Post from "./entities/post.js";
 import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
 import Cloud from "./entities/cloud.js";
-import { getNewId } from "./utils.js";
+import { getNewId, sendGameOverMessage } from "./utils.js";
 import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
 
 export class GameManager {
@@ -288,6 +288,7 @@ export class GameManager {
         if (tribe.tribesmen.length === 0) {
           this.entities.delete(tribe.id);
           this.teamCounts[tribe.teamId]--;
+          sendGameOverMessage(tribe.id);
           return true; // Tribe is dead
         }
       }

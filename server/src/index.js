@@ -4,7 +4,7 @@ import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { GameManager } from './gameLogic.js';
-import { setGameManager } from './utils.js';
+import { setClientsMap, setGameManager, setWebSocketServer } from './utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,11 +13,13 @@ const app = express();
 const server = http.createServer(app);
 app.use('/shared', express.static(path.join(__dirname, '../../shared')));
 const wss = new WebSocketServer({ server });
+setWebSocketServer(wss); // Set WebSocket server for utils.js
 
 const gameManager = new GameManager();
 setGameManager(gameManager); // Set gameManager for utils.js
 gameManager.createWorld(); // Initialize meadows at server start
-const clients = new Map();
+const clients = new Map(); // Map of WebSocket clients to tribe IDs
+setClientsMap(clients); // Set clients map for utils.js
 let lastBroadcastTime = 0;
 const BROADCAST_INTERVAL = 80; // Broadcast at most every 80ms (~12.5 updates/sec)
 
