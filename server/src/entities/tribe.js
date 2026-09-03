@@ -169,7 +169,12 @@ class Tribe extends Entity {
       this.opponentTribeId = null;
       return; // Not close enough to fight
     }
+    if (!otherTribe.tribesmen) {
+      this.opponentTribeId = null;
+      return; // Other tribe is dead
+    }
     this.opponentTribeId = otherTribe.id;
+    console.log(`Tribe ${this.name} is fighting Tribe ${otherTribe.name}`);
     const otherTribesmen = otherTribe.tribesmen.sort((a, b) => TRIBESMAN_ATTACK_PRIORITIES[a.tool] - TRIBESMAN_ATTACK_PRIORITIES[b.tool]);
     let hitList = [];
     otherTribesmen.forEach(tribesman => {
@@ -191,7 +196,7 @@ class Tribe extends Entity {
           tribesman.addTask(task);
           break;
         case "bow":
-          task = new Task("fight", hitList[0].id); // Bows always focus down
+          task = new Task("fight", hitList[0].tribesman.id); // Bows always focus down
           hitList[0].targeted = true;
           tribesman.addTask(task);
           break;
@@ -210,14 +215,14 @@ class Tribe extends Entity {
             targetId = hitList.find(hit => !hit.targeted);
           }
           if (!targetId) {
-            targetId = hitList[0];
+            targetId = hitList[0].tribesman.id;
           }
           hitList.find(hit => hit.tribesman.id === targetId.tribesman.id).targeted = true;
           task = new Task("fight", targetId);
           tribesman.addTask(task);
           break;
         default:
-          targetId = hitList.find(hit => !hit.targeted)?.tribesman.id || hitList[0].id;
+          targetId = hitList.find(hit => !hit.targeted)?.tribesman.id || hitList[0].tribesman.id;
           hitList.find(hit => hit.tribesman.id === targetId).targeted = true;
           task = new Task("fight", targetId);
           tribesman.addTask(task);

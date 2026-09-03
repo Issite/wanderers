@@ -29,12 +29,12 @@ export const TRIBESMAN_ATTACK_PRIORITIES = {
     "none": 3
 };
 export const TOOL_ATTACK_COOLDOWNS = {
-    "sword": 1,
-    "axe": 2,
-    "hammer": 2,
-    "scythe": 2,
-    "dagger": 1,
-    "bow": 2.5,
+    "sword": 2,
+    "axe": 4,
+    "hammer": 4,
+    "scythe": 4,
+    "dagger": 2,
+    "bow": 5,
     "none": 0.5 // Shouldn't ever be referenced, but just in case
 };
 export const DROPPED_RESOURCE_AVOID_TIME = 5;

@@ -201,10 +201,12 @@ export class GameManager {
         const target = this.entities.get(task.targetId);
         if (target && target.constructor.name === "Tribesman") {
           if (target.damage(1)) {
-            this.killTribesman(target.id);
+            if (this.killTribesman(target.id)) {
+              return true;
+            }
             // Now each tribe need to recalculate their matchups
-            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, force = true);
-            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, force = true);
+            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, true);
+            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
             return true; // Task complete if target is dead
           }
         }
@@ -283,8 +285,14 @@ export class GameManager {
       const tribe = this.entities.get(tribesman.tribeId);
       if (tribe) {
         tribe.removeTribesman(tribesmanId);
+        if (tribe.tribesmen.length === 0) {
+          this.entities.delete(tribe.id);
+          this.teamCounts[tribe.teamId]--;
+          return true; // Tribe is dead
+        }
       }
     }
+    return false; // Tribe is still alive
   }
 
   tryTargetMushroom(tribeId, mushroomId) {
