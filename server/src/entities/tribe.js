@@ -26,7 +26,7 @@ class Tribe extends Entity {
         // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
         // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
       ];
-    } // barb tribesmen generation called explicitly
+    } // barb tribesmen generation called explicitly in gameLogic.js
     this.tribesmen.forEach(tribesman => gameManager.entities.set(tribesman.id, tribesman));
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
@@ -41,6 +41,7 @@ class Tribe extends Entity {
     };
     this.avoidingResources = {}; // Resources to avoid for a certain time after dropping
     this.targets = []; // Currently only mushrooms.
+    this.opponentTribeId = null;
   }
 
   generateBarbarians(size) {
@@ -158,8 +159,17 @@ class Tribe extends Entity {
     });
   }
 
-  fightTribe(otherTribe) {
+  fightTribe(otherTribe, force = false) {
     // pain
+    const distanceToOtherTribe = Math.hypot(otherTribe.x - this.x, otherTribe.y - this.y);
+    if (!force && this.opponentTribeId && this.opponentTribeId === otherTribe.id) {
+      return; // Already fighting this tribe
+    }
+    if (distanceToOtherTribe > INTERACTION_DISTANCE) {
+      this.opponentTribeId = null;
+      return; // Not close enough to fight
+    }
+    this.opponentTribeId = otherTribe.id;
     const otherTribesmen = otherTribe.tribesmen.sort((a, b) => TRIBESMAN_ATTACK_PRIORITIES[a.tool] - TRIBESMAN_ATTACK_PRIORITIES[b.tool]);
     let hitList = [];
     otherTribesmen.forEach(tribesman => {

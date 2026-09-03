@@ -1,6 +1,6 @@
 import Entity from "./entity.js";
 import Task from "../task.js";
-import TOOL_ATTACK_COOLDOWNS from "../../../shared/constants.js";
+import { TOOL_ATTACK_COOLDOWNS } from "../../../shared/constants.js";
 
 export default class Tribesman extends Entity {
   constructor(id, x, y, tribeId, tool = "none", armor = 0, health = 3) {

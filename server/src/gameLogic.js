@@ -203,8 +203,8 @@ export class GameManager {
           if (target.damage(1)) {
             this.killTribesman(target.id);
             // Now each tribe need to recalculate their matchups
-            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId);
-            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId);
+            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, force = true);
+            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, force = true);
             return true; // Task complete if target is dead
           }
         }
