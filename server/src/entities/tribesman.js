@@ -27,12 +27,7 @@ export default class Tribesman extends Entity {
       this.tasks.push(task);
       this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
       if (this.cooldown === 0) {
-        if (this.tasks[0].type === "fight") {
-          const attackVariance = Math.random() * 0.4 - 0.2; // Random variance between -0.2 and 0.2
-          this.cooldown = TOOL_ATTACK_COOLDOWNS[this.tool] + attackVariance;
-        } else {
-          this.cooldown = this.tasks[0].cooldownTime;
-        }
+        this.cooldown = this.varyCooldown(this.tasks[0]); // Set cooldown for the next task
       }
     }
   }
@@ -47,10 +42,20 @@ export default class Tribesman extends Entity {
           this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
           this.targetId = this.tasks[0] ? this.tasks[0].targetId : null; // Update targetId to the next task's targetId
         }
-        this.cooldown = this.tasks[0].cooldownTime;
+        this.cooldown = this.varyCooldown(this.tasks[0]); // Set cooldown for the next task
       }
     }
   }
+
+  varyCooldown(task) {
+    const variance = Math.random() * 0.4 - 0.2; // Random variance between -0.2 and 0.2
+    if (task.type === "fight") {
+      this.cooldown = TOOL_ATTACK_COOLDOWNS[this.tool] + variance;
+    } else {
+      this.cooldown = this.tasks[0].cooldownTime + variance;
+    }
+  }
+
 
   toJSON() {
     return {
