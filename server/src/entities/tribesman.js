@@ -9,6 +9,7 @@ export default class Tribesman extends Entity {
     this.tool = tool;
     this.armor = armor;
     this.tasks = [new Task("idle", null)];
+    this.targetId = null;
     this.cooldown = 0;
   }
 
@@ -38,6 +39,7 @@ export default class Tribesman extends Entity {
         if (gameManager.completeTask(this, this.tasks[0])) { // i.e. I'm done this step. Am I done?
           this.tasks.shift(); // Remove completed task
           this.tasks.sort((a, b) => a.priority - b.priority); // Sort tasks by priority
+          this.targetId = this.tasks[0] ? this.tasks[0].targetId : null; // Update targetId to the next task's targetId
         }
         this.cooldown = this.tasks[0].cooldownTime;
       }
@@ -54,7 +56,8 @@ export default class Tribesman extends Entity {
       tool: this.tool,
       armor: this.armor,
       tasks: this.tasks,
-      cooldown: this.cooldown
+      cooldown: this.cooldown,
+      targetId: this.targetId
     }
   }
 }
