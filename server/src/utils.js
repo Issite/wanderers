@@ -44,8 +44,17 @@ export function getClientsMap() {
 export function sendGameOverMessage(tribeId) {
   const message = JSON.stringify({
     type: 'gameOver',
+    tribeId,
   });
-  const client = getClientsMap().entries().find(([ws, id]) => id === tribeId)?.[0];
+
+  let client;
+  for (const [ws, id] of getClientsMap().entries()) {
+    if (id === tribeId) {
+      client = ws;
+      break;
+    }
+  }
+
   if (client && client.readyState === 1) {
     client.send(message);
   }
