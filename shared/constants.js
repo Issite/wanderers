@@ -17,6 +17,7 @@ export const TASKS = {
     "cut grass": { priority: 10, cooldownTime: 2 },
     "pick mushroom": { priority: 15, cooldownTime: 1 },
     "pickup resource": { priority: 20, cooldownTime: 1 },
+    "collect crate": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
 };
 export const TRIBESMAN_ATTACK_PRIORITIES = {
