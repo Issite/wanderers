@@ -251,6 +251,10 @@ export class GameManager {
       case "collect crate":
         const crate = this.entities.get(task.targetId);
         if (crate) {
+          const tribe = this.entities.get(tribesman.tribeId);
+          if (tribe) {
+            // tribe.addExperience(1); // Not implemented yet
+          }
           this.spawnResources(crate.x, crate.y, CRATE_CONTENTS);
           this.entities.delete(crate.id);
         }
