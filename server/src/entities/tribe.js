@@ -119,7 +119,7 @@ class Tribe extends Entity {
             if (entity.teamId === this.teamId) { // Add missionary check here later
               break;
             }
-            this.fightTribe(entity);
+            this.fightTribe(entity.id);
             break;
           case "Tree":
             this.tribesmen.forEach(tribesman => {
@@ -159,8 +159,9 @@ class Tribe extends Entity {
     });
   }
 
-  fightTribe(otherTribe, force = false) {
+  fightTribe(otherTribeId, force = false) {
     // pain
+    const otherTribe = getGameManager().entities.get(otherTribeId);
     const distanceToOtherTribe = Math.hypot(otherTribe.x - this.x, otherTribe.y - this.y);
     if (!force && this.opponentTribeId && this.opponentTribeId === otherTribe.id) {
       return; // Already fighting this tribe
