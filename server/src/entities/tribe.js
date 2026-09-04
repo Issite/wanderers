@@ -3,7 +3,12 @@ import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
 import Task from "../task.js";
 import { getNewId, getGameManager } from "../utils.js";
-import { MAX_MOVE_SPEED, INTERACTION_DISTANCE, DROPPED_RESOURCE_AVOID_TIME } from "../../../shared/constants.js";
+import {
+  MAX_MOVE_SPEED,
+  INTERACTION_DISTANCE,
+  DROPPED_RESOURCE_AVOID_TIME,
+  TRIBESMAN_ATTACK_PRIORITIES,
+} from "../../../shared/constants.js";
 
 class Tribe extends Entity {
   constructor(id, x, y, name, teamId, teamCode, aiType = "player") {
@@ -21,7 +26,7 @@ class Tribe extends Entity {
         // new Tribesman(getNewId(gameManager), 0, 0, id, "hammer"),
         // new Tribesman(getNewId(gameManager), 0, 0, id, "scythe")
       ];
-    } // barb tribesmen generation called explicitly
+    } // barb tribesmen generation called explicitly in gameLogic.js
     this.tribesmen.forEach(tribesman => gameManager.entities.set(tribesman.id, tribesman));
     this.totem = new Totem(getNewId(gameManager), x, y, this.id);
     this.maxMoveSpeed = MAX_MOVE_SPEED;
@@ -36,6 +41,7 @@ class Tribe extends Entity {
     };
     this.avoidingResources = {}; // Resources to avoid for a certain time after dropping
     this.targets = []; // Currently only mushrooms.
+    this.opponentTribeId = null;
   }
 
   generateBarbarians(size) {
@@ -109,6 +115,12 @@ class Tribe extends Entity {
       const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
       if (distanceToEntity <= INTERACTION_DISTANCE) {
         switch (entity.constructor.name) {
+          case "Tribe":
+            if (entity.teamId === this.teamId) { // Add missionary check here later
+              break;
+            }
+            this.fightTribe(entity.id);
+            break;
           case "Tree":
             this.tribesmen.forEach(tribesman => {
               if (tribesman.tool === "axe") {
@@ -145,6 +157,84 @@ class Tribe extends Entity {
         }
       }
     });
+  }
+
+  fightTribe(otherTribeId, force = false) {
+    // pain
+    const otherTribe = getGameManager().entities.get(otherTribeId);
+    const distanceToOtherTribe = Math.hypot(otherTribe.x - this.x, otherTribe.y - this.y);
+    if (!force && this.opponentTribeId && this.opponentTribeId === otherTribe.id) {
+      return; // Already fighting this tribe
+    }
+    if (distanceToOtherTribe > INTERACTION_DISTANCE) {
+      this.opponentTribeId = null;
+      return; // Not close enough to fight
+    }
+    if (!otherTribe.tribesmen) {
+      this.opponentTribeId = null;
+      return; // Other tribe is dead
+    }
+    this.opponentTribeId = otherTribe.id;
+    const otherTribesmen = otherTribe.tribesmen.sort((a, b) => TRIBESMAN_ATTACK_PRIORITIES[a.tool] - TRIBESMAN_ATTACK_PRIORITIES[b.tool]);
+    let hitList = [];
+    otherTribesmen.forEach(tribesman => {
+      hitList.push({targeted: false, tribesman: tribesman});
+    });
+    this.tribesmen.forEach(tribesman => {
+      if (tribesman.tasks[0].type === "fight") {
+        const currentTargetId = tribesman.tasks[0].targetId;
+        const currentTarget = hitList.find(hit => hit.tribesman.id === currentTargetId);
+        if (currentTarget) {
+          currentTarget.targeted = true;
+          return; // Already has a living target
+        } else {
+          tribesman.tasks.shift(); // Remove invalid target
+        }
+      }
+      let task, targetId;
+      switch (tribesman.tool) {
+        case "none":
+          task = new Task("panic", null);
+          tribesman.addTask(task);
+          break;
+        case "bow":
+          task = new Task("fight", hitList[0].tribesman.id); // Bows always focus down
+          hitList[0].targeted = true;
+          tribesman.addTask(task);
+          break;
+        case "dagger":
+          /* Try, in order:
+          * Find a target that is not already targeted and has a bow
+          * Find first target that has a bow
+          * Find a target that is not already targeted
+          * Find first target
+          */
+          targetId = hitList.find(hit => !hit.targeted && hit.tribesman.tool === "bow").tribesman.id;
+          if (!targetId) {
+            targetId = hitList.find(hit => hit.tribesman.tool === "bow").tribesman.id;
+          }
+          if (!targetId) {
+            targetId = hitList.find(hit => !hit.targeted).tribesman.id;
+          }
+          if (!targetId) {
+            targetId = hitList[0].tribesman.id;
+          }
+          hitList.find(hit => hit.tribesman.id === targetId.tribesman.id).targeted = true;
+          task = new Task("fight", targetId);
+          tribesman.addTask(task);
+          break;
+        default:
+          targetId = hitList.find(hit => !hit.targeted)?.tribesman.id || hitList[0].tribesman.id;
+          hitList.find(hit => hit.tribesman.id === targetId).targeted = true;
+          task = new Task("fight", targetId);
+          tribesman.addTask(task);
+          break;
+      }
+    })
+  }
+
+  removeTribesman(tribesmanId) {
+    this.tribesmen = this.tribesmen.filter(tribesman => tribesman.id !== tribesmanId);
   }
 
   tryTargetMushroom(mushroomId) {

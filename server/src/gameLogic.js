@@ -4,7 +4,7 @@ import Post from "./entities/post.js";
 import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
 import Cloud from "./entities/cloud.js";
-import { getNewId } from "./utils.js";
+import { getNewId, sendGameOverMessage } from "./utils.js";
 import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
 
 export class GameManager {
@@ -197,6 +197,21 @@ export class GameManager {
 
   completeTask(tribesman, task) {
     switch (task.type) {
+      case "fight":
+        const target = this.entities.get(task.targetId);
+        if (target && target.constructor.name === "Tribesman") {
+          if (target.damage(1)) {
+            if (this.killTribesman(target.id)) {
+              return true;
+            }
+            // Now each tribe needs to recalculate their matchups
+            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, true);
+            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
+            return true; // Task complete if target is dead
+          }
+        }
+        return false; // Fight tasks are ongoing until the target is dead
+        break;
       case "chop tree":
         const tree = this.entities.get(task.targetId);
         if (tree) {
@@ -250,7 +265,9 @@ export class GameManager {
           if (mushroom.type < 4) {
             this.entities.get(tribesman.tribeId).addResource("food");
           } else {
-            tribesman.damage(1);
+            if (tribesman.damage(1)) {
+              this.killTribesman(tribesman.id);
+            }
           }
           this.entities.delete(mushroom.id);
         }
@@ -259,6 +276,24 @@ export class GameManager {
       default:
         return true; // Other tasks complete immediately
     }
+  }
+
+  killTribesman(tribesmanId) {
+    const tribesman = this.entities.get(tribesmanId);
+    if (tribesman && tribesman.constructor.name === "Tribesman") {
+      this.entities.delete(tribesmanId);
+      const tribe = this.entities.get(tribesman.tribeId);
+      if (tribe) {
+        tribe.removeTribesman(tribesmanId);
+        if (tribe.tribesmen.length === 0) {
+          this.entities.delete(tribe.id);
+          this.teamCounts[tribe.teamId]--;
+          sendGameOverMessage(tribe.id);
+          return true; // Tribe is dead
+        }
+      }
+    }
+    return false; // Tribe is still alive
   }
 
   tryTargetMushroom(tribeId, mushroomId) {

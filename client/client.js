@@ -192,6 +192,14 @@ function sendTotemUpdate() {
   }
 }
 
+function gameOver() {
+  tribeID = null;
+  localTribe = null;
+  showError('Game over! You have been eliminated.');
+  menuScreen.classList.add('active');
+  gameScreen.classList.remove('active');
+}
+
 function targetMushroom(mushroomId) {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({
@@ -226,6 +234,9 @@ function connectWebSocket() {
       showGameScreen();
     } else if (data.type === 'registered') {
       console.log('Registered with tribe ID:', data.tribeId);
+    } else if (data.type === 'gameOver') {
+      console.log('Game over for tribe:', data.tribeId);
+      gameOver();
     }
   };
 
