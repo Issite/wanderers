@@ -204,7 +204,7 @@ export class GameManager {
             if (this.killTribesman(target.id)) {
               return true;
             }
-            // Now each tribe need to recalculate their matchups
+            // Now each tribe needs to recalculate their matchups
             this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, true);
             this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
             return true; // Task complete if target is dead
