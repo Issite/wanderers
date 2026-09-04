@@ -209,12 +209,12 @@ class Tribe extends Entity {
           * Find a target that is not already targeted
           * Find first target
           */
-          targetId = hitList.find(hit => !hit.targeted && hit.tribesman.tool === "bow");
+          targetId = hitList.find(hit => !hit.targeted && hit.tribesman.tool === "bow").tribesman.id;
           if (!targetId) {
-            targetId = hitList.find(hit => hit.tribesman.tool === "bow");
+            targetId = hitList.find(hit => hit.tribesman.tool === "bow").tribesman.id;
           }
           if (!targetId) {
-            targetId = hitList.find(hit => !hit.targeted);
+            targetId = hitList.find(hit => !hit.targeted).tribesman.id;
           }
           if (!targetId) {
             targetId = hitList[0].tribesman.id;
