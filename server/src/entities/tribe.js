@@ -154,6 +154,13 @@ class Tribe extends Entity {
               }
             }
             break;
+          case "Crate":
+            const task = new Task("collect crate", entity.id);
+            const idleTribesman = this.tribesmen.find(tribesman => tribesman.tasks[0].type === "idle");
+            if (idleTribesman) {
+              idleTribesman.addTask(task);
+            }
+            break;
         }
       }
     });

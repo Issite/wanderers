@@ -381,6 +381,11 @@ function drawMinimap() {
       const isSameTeam = entity.teamId === localTribe.teamId;
       ctx.fillStyle = isSameTeam ? '#00ff66' : '#ff2f2f';
       ctx.fillRect(tribeX - tribeSize / 2, tribeY - tribeSize / 2, tribeSize, tribeSize);
+    } else if (entity.entityType === 'crate') {
+      const crateX = minimapX + entity.x * scaleX;
+      const crateY = minimapY + entity.y * scaleY;
+      ctx.fillStyle = '#d5ab00ff';
+      ctx.fillRect(crateX - 3, crateY - 3, 6, 6);
     }
   });
 }
@@ -693,6 +698,23 @@ function drawEntity(entity) {
         ctx.stroke();
       }
     }
+  } else if (entity.entityType === 'crate') {
+    const crate = entity;
+    const screenX = crate.x - cameraX;
+    const screenY = crate.y - cameraY;
+
+    // Only draw if crate is on screen
+    if (
+      screenX + 20 < 0 ||
+      screenX - 20 > canvas.width ||
+      screenY + 20 < 0 ||
+      screenY - 20 > canvas.height
+    ) {
+      return;
+    }
+
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(screenX - 15, screenY - 15, 30, 30);
   }
 }
 

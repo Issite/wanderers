@@ -3,9 +3,16 @@ import Meadow from "./entities/meadow.js";
 import Post from "./entities/post.js";
 import Rabbit from "./entities/rabbit.js";
 import Resource from "./entities/resource.js";
+import Crate from "./entities/crate.js";
 import Cloud from "./entities/cloud.js";
 import { getNewId, sendGameOverMessage } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
+import {
+  MAP_WIDTH,
+  MAP_HEIGHT,
+  TARGET_RABBIT_POPULATION,
+  CLOUD_COUNT,
+  CRATE_CONTENTS
+} from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -18,6 +25,7 @@ export class GameManager {
     this.updateCount = 0;
     this.lastUpdateCountReset = Date.now();
     this.lastRabbitSpawnTime = Date.now();
+    this.lastCrateSpawnTime = Date.now();
     this.lastUpdateTime = Date.now();
     this.deltaTime = 0;
   }
@@ -188,6 +196,12 @@ export class GameManager {
         this.spawnRabbits();
         this.lastRabbitSpawnTime = now;
       }
+
+      // Spawn crates every minute, up to 4 on the map
+      if (now - this.lastCrateSpawnTime >= 60000) {
+        this.spawnCrate();
+        this.lastCrateSpawnTime = now;
+      }
       
       if (this.onStateChange) {
         this.onStateChange();
@@ -231,6 +245,18 @@ export class GameManager {
         if (resource) {
           this.entities.get(tribesman.tribeId).addResource(resource.type);
           this.entities.delete(resource.id);
+        }
+        return true;
+        break;
+      case "collect crate":
+        const crate = this.entities.get(task.targetId);
+        if (crate) {
+          const tribe = this.entities.get(tribesman.tribeId);
+          if (tribe) {
+            // tribe.addExperience(1); // Not implemented yet
+          }
+          this.spawnResources(crate.x, crate.y, CRATE_CONTENTS);
+          this.entities.delete(crate.id);
         }
         return true;
         break;
@@ -328,6 +354,27 @@ export class GameManager {
       spawnedResources.push(resource);
     });
     return spawnedResources;
+  }
+
+  spawnCrate() {
+    const crateCount = Array.from(this.entities.values()).filter(e => e && e.constructor.name === "Crate").length;
+    if (crateCount >= 4) {
+      return null;
+    }
+
+    const centerX = MAP_WIDTH / 2;
+    const centerY = MAP_HEIGHT / 2;
+    const innerRadius = MAP_HEIGHT / 6;
+    const outerRadius = MAP_HEIGHT / 3;
+    const angle = Math.random() * 2 * Math.PI;
+    const radius = Math.sqrt(Math.random() * (outerRadius * outerRadius - innerRadius * innerRadius) + innerRadius * innerRadius);
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
+
+    const crateId = getNewId(this);
+    const crate = new Crate(crateId, x, y);
+    this.entities.set(crate.id, crate);
+    return crate;
   }
 
   stopUpdateLoop() {

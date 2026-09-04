@@ -17,6 +17,7 @@ export const TASKS = {
     "cut grass": { priority: 10, cooldownTime: 2 },
     "pick mushroom": { priority: 15, cooldownTime: 1 },
     "pickup resource": { priority: 20, cooldownTime: 1 },
+    "collect crate": { priority: 20, cooldownTime: 1 },
     "idle": { priority: 99, cooldownTime: 0 }
 };
 export const TRIBESMAN_ATTACK_PRIORITIES = {
@@ -38,4 +39,5 @@ export const TOOL_ATTACK_COOLDOWNS = {
     "none": 0.5 // Shouldn't ever be referenced, but just in case
 };
 export const DROPPED_RESOURCE_AVOID_TIME = 5;
+export const CRATE_CONTENTS = ["wood", "food", "gold"];
 export const TEAM_COLORS = ["#705429ff", "#9a2222ff", "#4e2c00ff", "#4363d8ff", "#22ca0fff", "#e4da23ff", "#e1ffffff"];
