@@ -6,7 +6,13 @@ import Resource from "./entities/resource.js";
 import Crate from "./entities/crate.js";
 import Cloud from "./entities/cloud.js";
 import { getNewId, sendGameOverMessage } from "./utils.js";
-import { MAP_WIDTH, MAP_HEIGHT, TARGET_RABBIT_POPULATION, CLOUD_COUNT } from "../../shared/constants.js";
+import {
+  MAP_WIDTH,
+  MAP_HEIGHT,
+  TARGET_RABBIT_POPULATION,
+  CLOUD_COUNT,
+  CRATE_CONTENTS
+} from "../../shared/constants.js";
 
 export class GameManager {
   constructor() {
@@ -245,10 +251,7 @@ export class GameManager {
       case "collect crate":
         const crate = this.entities.get(task.targetId);
         if (crate) {
-          const tribe = this.entities.get(tribesman.tribeId);
-          tribe.addResource("wood");
-          tribe.addResource("food");
-          tribe.addResource("gold");
+          this.spawnResources(crate.x, crate.y, CRATE_CONTENTS);
           this.entities.delete(crate.id);
         }
         return true;
