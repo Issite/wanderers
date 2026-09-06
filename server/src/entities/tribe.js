@@ -2,12 +2,13 @@ import Entity from "./entity.js";
 import Tribesman from "./tribesman.js";
 import Totem from "./totem.js";
 import Task from "../task.js";
-import { getNewId, getGameManager } from "../utils.js";
+import { getNewId, getGameManager, levelUpTribe } from "../utils.js";
 import {
   MAX_MOVE_SPEED,
   INTERACTION_DISTANCE,
   DROPPED_RESOURCE_AVOID_TIME,
   TRIBESMAN_ATTACK_PRIORITIES,
+  LEVEL_TABLE
 } from "../../../shared/constants.js";
 
 class Tribe extends Entity {
@@ -18,6 +19,7 @@ class Tribe extends Entity {
     this.teamCode = teamCode;
     this.aiType = aiType;
     this.experience = 0;
+    this.level = 0;
     const gameManager = getGameManager();
     this.tribesmen = [];
     if (aiType === "player") { // i.e. not barbarians
@@ -66,6 +68,11 @@ class Tribe extends Entity {
 
   addExperience(amount) {
     this.experience += amount;
+    const newLevel = LEVEL_TABLE.findIndex(exp => exp > this.experience) - 1;
+    if (newLevel > this.level) {
+      this.level = newLevel;
+      levelUpTribe(this.id, this.level); // Notify game manager of level up
+    }
   }
 
   update(gameManager) {

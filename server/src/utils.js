@@ -59,3 +59,23 @@ export function sendGameOverMessage(tribeId) {
     client.send(message);
   }
 }
+
+export function levelUpTribe(tribeId, newLevel) {
+  const message = JSON.stringify({
+    type: 'levelUp',
+    tribeId,
+    newLevel,
+  });
+
+  let client;
+  for (const [ws, id] of getClientsMap().entries()) {
+    if (id === tribeId) {
+      client = ws;
+      break;
+    }
+  }
+
+  if (client && client.readyState === 1) {
+    client.send(message);
+  }
+}

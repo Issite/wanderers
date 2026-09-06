@@ -237,6 +237,8 @@ function connectWebSocket() {
     } else if (data.type === 'gameOver') {
       console.log('Game over for tribe:', data.tribeId);
       gameOver();
+    } else if (data.type === 'levelUp') {
+      console.log(`Tribe ${data.tribeId} leveled up to level ${data.newLevel}`);
     }
   };
 
