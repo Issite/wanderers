@@ -8,6 +8,14 @@ export const CLOUD_SPEED = 50;
 export const CLOUD_RAIN_TIME = 5;
 export const CLOUD_COUNT = 2;
 export const MAX_MOVE_SPEED = 150;
+export const MAX_LEVEL = 9;
+export const LEVEL_TABLE = (() => {
+    const table = [];
+    for (let level = 0; level <= MAX_LEVEL; level++) {
+        table.push(level * (2 + level * 0.25) | 0);
+    }
+    return table;
+})();
 export const INTERACTION_DISTANCE = 250;
 export const TASKS = {
     "fight": { priority: 0, cooldownTime: 2 },

@@ -276,6 +276,7 @@ class Tribe extends Entity {
       entityType: "tribe",
       name: this.name,
       teamId: this.teamId,
+      experience: this.experience,
       tribesmen: this.tribesmen,
       totem: this.totem,
       x: this.x,

@@ -7,8 +7,16 @@
 
 ```mermaid
 sequenceDiagram
+participant GameManager@{ "type" : "control" }
 actor Tribe
 actor Tribesmen
 
-
+Tribe->>Tribe: fighting triggered
+Tribe->>Tribesmen: assign fight tasks
+Tribesmen->>GameManager: make attack
+GameManager->>Tribesmen: do damage
+loop If killed
+    Tribesmen->>GameManager: report death
+    GameManager->>Tribe: retrigger fight
+end
 ```
