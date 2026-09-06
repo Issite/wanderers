@@ -125,13 +125,15 @@ class Tribe extends Entity {
     gameManager.entities.forEach(entity => {
       if (!entity) return;
       const distanceToEntity = Math.hypot(entity.x - this.x, entity.y - this.y);
+      let fighting = false;
       if (distanceToEntity <= INTERACTION_DISTANCE) {
         switch (entity.constructor.name) {
           case "Tribe":
-            if (entity.teamId === this.teamId) { // Add missionary check here later
+            if (entity.teamId === this.teamId) {
               break;
             }
             this.fightTribe(entity.id);
+            fighting = true;
             break;
           case "Tree":
             this.tribesmen.forEach(tribesman => {
@@ -174,6 +176,10 @@ class Tribe extends Entity {
             }
             break;
         }
+      }
+      if (!fighting && this.opponentTribeId === entity.id) {
+        this.opponentTribeId = null; // Stop fighting if no longer in range
+        this.endFightWithTribe(entity.id);
       }
     });
   }
@@ -250,6 +256,17 @@ class Tribe extends Entity {
           break;
       }
     })
+  }
+
+  endFightWithTribe(otherTribeId) {
+    this.tribesmen.forEach(tribesman => {
+      if (tribesman.tasks[0].type === "fight" && tribesman.tasks[0].targetId) {
+        const target = getGameManager().entities.get(tribesman.tasks[0].targetId);
+        if (target && target.constructor.name === "Tribesman" && target.tribeId === otherTribeId) {
+          tribesman.tasks.shift(); // Remove fight task
+        }
+      }
+    });
   }
 
   removeTribesman(tribesmanId) {

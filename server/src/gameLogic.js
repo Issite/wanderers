@@ -215,12 +215,11 @@ export class GameManager {
         const target = this.entities.get(task.targetId);
         if (target && target.constructor.name === "Tribesman") {
           if (target.damage(1)) {
-            if (this.killTribesman(target.id)) {
-              return true;
-            }
             // Now each tribe needs to recalculate their matchups
-            this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, true);
-            this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
+            if (!this.killTribesman(target.id)) {
+              this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
+              this.entities.get(tribesman.tribeId).fightTribe(target.tribeId, true);
+            }
             return true; // Task complete if target is dead
           }
         }
@@ -253,7 +252,7 @@ export class GameManager {
         if (crate) {
           const tribe = this.entities.get(tribesman.tribeId);
           if (tribe) {
-            // tribe.addExperience(1); // Not implemented yet
+            tribe.addExperience(1);
           }
           this.spawnResources(crate.x, crate.y, CRATE_CONTENTS);
           this.entities.delete(crate.id);
