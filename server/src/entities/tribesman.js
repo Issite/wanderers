@@ -23,6 +23,16 @@ export default class Tribesman extends Entity {
     return false; // Tribesman is still alive
   }
 
+  getKillScore() {
+    let score = 0;
+    if (this.tool !== "none") {
+      score += 2; // Score for having a tool
+    }
+    // TODO: shields
+    score += this.armor; // Score for armor
+    return score;
+  }
+
   addTask(task) {
     if (!this.tasks.some(t => t.targetId === task.targetId && t.type === task.type)) {
       this.tasks.push(task);

@@ -215,6 +215,7 @@ export class GameManager {
         const target = this.entities.get(task.targetId);
         if (target && target.constructor.name === "Tribesman") {
           if (target.damage(1)) {
+            const killScore = target.getKillScore();
             // Now each tribe needs to recalculate their matchups
             if (!this.killTribesman(target.id)) {
               this.entities.get(target.tribeId).fightTribe(tribesman.tribeId, true);
