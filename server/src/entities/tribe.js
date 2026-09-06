@@ -17,6 +17,7 @@ class Tribe extends Entity {
     this.teamId = teamId;
     this.teamCode = teamCode;
     this.aiType = aiType;
+    this.experience = 0;
     const gameManager = getGameManager();
     this.tribesmen = [];
     if (aiType === "player") { // i.e. not barbarians
@@ -61,6 +62,10 @@ class Tribe extends Entity {
   updateDesiredPosition(totemX, totemY) {
     this.desiredX = totemX;
     this.desiredY = totemY;
+  }
+
+  addExperience(amount) {
+    this.experience += amount;
   }
 
   update(gameManager) {
